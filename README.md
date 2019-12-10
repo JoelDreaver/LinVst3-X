@@ -1,4 +1,4 @@
-# LinVst3
+# LinVst3-X
 
 Vst3 wrapper (beta).
 
@@ -6,13 +6,13 @@ For 64 bit vst3's only.
 
 Not all vst3 features are supported.
 
-Same usage applies as per LinVst except that it's linvst3.so instead of linvst.so and the vst dll filename extensions are .vst3 instead of .dll https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
+Same usage applies as per LinVst-X except that it's linvst3x.so instead of linvstx.so and the vst dll filename extensions are .vst3 instead of .dll https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
 
-So for example, linvst3.so would be renamed to Delay.so for Delay.vst3 (see convert folder for batch name conversion utilities)
+So for example, linvst3x.so would be renamed to Delay.so for Delay.vst3 (see convert folder for batch name conversion utilities)
 
 The vst3 dlls are most likely going to be in ~/.wine/drive_c/Program Files/Common Files/VST3
 
-LinVst3 will try to produce multiple loader part files for vst3's that contain multiple plugins. 
+LinVst3-X will try to produce multiple loader part files for vst3's that contain multiple plugins. 
 The multiple loader part files should be picked up on the daw's next plugin scan and then the multiple plugins should be available for use in the daw.
 
 Some vst3's might not work due to Wines current capabilities or for some other reason.
@@ -55,15 +55,15 @@ libxcb-keysyms1-dev
 
 -------
 
-This LinVst3 source folder needs to be placed within the VST3 SDK main folder (the VST3_SDK folder or the VST3 folder that contains the base, public.sdk, pluginterfaces etc folders) ie the LinVst3 source folder needs to be placed alongside the base, public.sdk, pluginterfaces etc folders of the VST3 SDK.
+This LinVst3-X source folder needs to be placed within the VST3 SDK main folder (the VST3_SDK folder or the VST3 folder that contains the base, public.sdk, pluginterfaces etc folders) ie the LinVst3-X source folder needs to be placed alongside the base, public.sdk, pluginterfaces etc folders of the VST3 SDK.
 
-Then change into the LinVst3 folder and run make and then sudo make install
+Then change into the LinVst3-X folder and run make and then sudo make install
 
-Then use the batch name conversion utilities (in the convert/binaries folder) to name convert linvst3.so to the vst3 plugin names ie first select linvst3.so and then select the ~/.wine/drive_c/Program Files/Common Files/VST3 folder https://github.com/osxmidi/LinVst/wiki
+Then use the batch name conversion utilities (in the convert/binaries folder) to name convert linvst3x.so to the vst3 plugin names ie first select linvst3x.so and then select the ~/.wine/drive_c/Program Files/Common Files/VST3 folder https://github.com/osxmidi/LinVst/wiki
 
 Currently builds ok with the vstsdk3613_08_04_2019_build_81
 
-To make using the vst2sdk, remove the -DVESTIGE entries from the Makefile and place the vst2sdk pluginterfaces folder inside the main LinVst3 source folder.
+To make using the vst2sdk, remove the -DVESTIGE entries from the Makefile and place the vst2sdk pluginterfaces folder inside the main LinVst3-X source folder.
 
 ----------
 
