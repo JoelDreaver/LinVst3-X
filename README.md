@@ -6,7 +6,21 @@ For 64 bit vst3's only.
 
 Not all vst3 features are supported.
 
-Same usage applies as per LinVst-X except that it's linvst3x.so instead of linvstx.so and the vst dll filename extensions are .vst3 instead of .dll https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
+LinVst3-X adds support for Windows vst3 plugins to be used in Linux vst capable DAW's.
+
+LinVst3-X runs vst plugins in a single Wine process so plugins that communicate with each other or plugins that can use shared samples between instances will be able to communicate with their other instances.
+
+Plugins running in one process are not sandboxed, so if one plugin crashes then the whole lot might crash.
+
+It's best to use plugins that already run with LinVst3 and/or use TestVst3 to test how a plugin might run under Wine.
+
+The LinVst3-X server can be preloaded
+
+wine /usr/bin/lin-vst3-server-x.exe.so for 64 bit plugins
+
+wine /usr/bin/lin-vst3-server-x32.exe.so for 32 bit plugins
+
+LinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-GuideLinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
 
 So for example, linvst3x.so would be renamed to Delay.so for Delay.vst3 (see convert folder for batch name conversion utilities)
 
