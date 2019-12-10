@@ -20,16 +20,18 @@ wine /usr/bin/lin-vst3-server-x.exe.so for 64 bit plugins
 
 wine /usr/bin/lin-vst3-server-x32.exe.so for 32 bit plugins
 
-LinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-GuideLinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
+LinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst3 dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
 
 So for example, linvst3x.so would be renamed to Delay.so for Delay.vst3 (see convert folder for batch name conversion utilities)
 
 The vst3 dlls are most likely going to be in ~/.wine/drive_c/Program Files/Common Files/VST3
 
-LinVst3-X will try to produce multiple loader part files for vst3's that contain multiple plugins. 
+LinVst3-X will try to produce multiple loader part files for vst3 plugins that contain multiple plugins. 
 The multiple loader part files should be picked up on the daw's next plugin scan and then the multiple plugins should be available for use in the daw.
 
-Some vst3's might not work due to Wines current capabilities or for some other reason.
+Some vst3 plugins might not work due to Wines current capabilities or for some other reason.
+
+Use TestVst3 for testing how a vst3 plugin might run under Wine.
 
 -------
 
