@@ -6,7 +6,7 @@ For 64 bit vst3's only.
 
 Not all vst3 features are supported.
 
-LinVst3-X adds support for Windows vst3 plugins to be used in Linux vst capable DAW's.
+LinVst3-X (the X stands for Extra) adds support for Windows vst3 plugins to be used in Linux vst capable DAW's.
 
 LinVst3-X runs vst plugins in a single Wine process so plugins that communicate with each other or plugins that can use shared samples between instances will be able to communicate with their other instances.
 
