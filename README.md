@@ -16,6 +16,8 @@ Plugins running in one process are not sandboxed, so if one plugin crashes then 
 
 It's best to use plugins that already run with LinVst3 and/or use TestVst3 to test how a plugin might run under Wine.
 
+Bitwig seems to require that LinVst Wine wrapped plugins run in a sandbox (Individually), which nullifies the purpose of LinVst3-X which is to run plugins in one process (not sandboxed), so Bitwig is probably not going to be a great match with LinVst3-X.
+
 The LinVst3-X server can be preloaded
 
 wine /usr/bin/lin-vst3-server-x.exe.so for 64 bit plugins
