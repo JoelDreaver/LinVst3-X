@@ -14,8 +14,6 @@ It means that plugin instances can communicate with each other (which is not pos
 
 Plugins running in one process are not sandboxed, so if one plugin crashes then the whole lot might crash.
 
-LinVst3-X is not recommended for use with Bitwig.
-
 It's best to use plugins that already run with LinVst3 and/or use TestVst3 to test how a plugin might run under Wine.
 
 The LinVst3-X server can be preloaded
