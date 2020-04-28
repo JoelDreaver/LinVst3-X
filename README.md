@@ -6,7 +6,7 @@ For 64 bit vst3's only.
 
 Not all vst3 features are supported.
 
-Saved projects are not compatible/transferable between Linux daws and their Windows versions and vice versa.
+Unlike Vst2, saved projects using wrapped Vst3 plugins are not compatible/transferable between Linux daws and their Windows versions and vice versa.
 
 LinVst3-X (the X stands for Extra) adds support for Windows vst3 plugins to be used in Linux vst capable DAW's.
 
