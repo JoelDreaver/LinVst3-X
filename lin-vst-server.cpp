@@ -1211,6 +1211,8 @@ bool RemoteVSTServer::warn(std::string warning)
 void RemoteVSTServer::showGUI()
 {
 DWORD dwWaitResult;	
+	
+    winm->winerror = 0;	
 
     if ((haveGui == false) || (guiVisible == true))
     {
