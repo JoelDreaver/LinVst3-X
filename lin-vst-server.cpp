@@ -995,10 +995,12 @@ void RemoteVSTServer::effDoVoid(int opcode)
    if (opcode == effEditGetRect)
    {
     rect = 0;
-    m_plugin->dispatcher(m_plugin, effEditGetRect, 0, 0, &rect, 0);
-//    m_plugin->dispatcher(m_plugin, effEditOpen, 0, 0, hWnd, 0);
- //   m_plugin->dispatcher(m_plugin, effEditGetRect, 0, 0, &rect, 0);
- //   m_plugin->dispatcher(m_plugin, effEditClose, 0, 0, 0, 0);
+    vst2wrap->editor->getRect (&remoteVSTServerInstance2[pidx]->rect);
+  	sched_yield();	     
+ //   vst2wrap->editor->open (hWndvst[pidx]);
+  	sched_yield();	     
+ //   vst2wrap->editor->getRect (&remoteVSTServerInstance2[pidx]->rect);    
+  	sched_yield();	     
     if (!rect)
     {
         winm->width = 0;
