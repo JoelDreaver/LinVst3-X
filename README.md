@@ -45,6 +45,28 @@ If a plugin has trouble with it's display then disabling d2d1 in the winecfg Lib
 
 The Sforzando VST3 runs in a better way with d2d1 disabled for instance.
 
+The LinVst3-X server can be preloaded
+
+wine /usr/bin/lin-vst3-server-x.exe.so 
+
+The LinVst3-X server can be killed
+
+To kill the server (when no plugins are loaded) get the pid of the lin-vst3-server
+
+pgrep lin-vst3
+
+or
+
+ps -ef | grep lin-vst3
+
+and then use the pid to kill the lin-vst3-server
+
+kill -15 pid
+
+or
+
+kill -9 pid
+
 -------
 
 LinVst3-X binaries are on the releases page (under Assets) https://github.com/osxmidi/LinVst3-X/releases
