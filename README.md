@@ -18,6 +18,8 @@ Plugins running in one process are not sandboxed, so if one plugin crashes then 
 
 It's best to use plugins that already run with LinVst3 and/or use TestVst3 to test how a plugin might run under Wine.
 
+LinVst3-X might have some problems running with Bitwig and Tracktion/Waveform due to some incompatibilities.
+
 The LinVst3-X server can be preloaded
 
 wine /usr/bin/lin-vst3-server-x.exe.so for 64 bit plugins
