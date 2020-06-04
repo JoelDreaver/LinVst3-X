@@ -20,12 +20,6 @@ It's best to use plugins that already run with LinVst3 and/or use TestVst3 to te
 
 LinVst3-X might have some problems running with Bitwig and Tracktion/Waveform due to some incompatibilities.
 
-The LinVst3-X server can be preloaded
-
-wine /usr/bin/lin-vst3-server-x.exe.so for 64 bit plugins
-
-wine /usr/bin/lin-vst3-server-x32.exe.so for 32 bit plugins
-
 LinVst3-X usage is basically the same as LinVst-X except that the file to be renamed to the vst3 dll name is linvst3x.so (rather than linvst.so for LinVst). https://github.com/osxmidi/LinVst/wiki https://github.com/osxmidi/LinVst/blob/master/README.md https://github.com/osxmidi/LinVst/tree/master/Detailed-Guide
 
 So for example, linvst3x.so would be renamed to Delay.so for Delay.vst3 (see convert folder for batch name conversion utilities)
@@ -45,11 +39,11 @@ Some vst3 plugins rely on the d2d1 dll which is not totally implemented in curre
 
 If a plugin has trouble with it's display then disabling d2d1 in the winecfg Libraries tab can be tried.
 
-The Sforzando VST3 runs in a better way with d2d1 disabled for instance.
+The Sforzando VST3 might run in a better way with d2d1 disabled for instance.
 
-The LinVst3-X server can be preloaded
+LinVst3-X server details.
 
-wine /usr/bin/lin-vst3-server-x.exe.so 
+The LinVst3-X server is first started (after a boot) when a plugin is first loaded and after that the LinVst server continues to run and further plugin loading can occur faster than with LinVst3.
 
 The LinVst3-X server can be killed
 
