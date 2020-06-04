@@ -43,7 +43,7 @@ The Sforzando VST3 might run in a better way with d2d1 disabled for instance.
 
 LinVst3-X server details.
 
-The LinVst3-X server is first started (after a boot) when a plugin is first loaded and after that the LinVst server continues to run and further plugin loading can occur faster than with LinVst3.
+The LinVst3-X server is first started (after a boot) when a plugin is first loaded and after that the LinVst3-X server continues to run and further plugin loading can occur faster than with LinVst3.
 
 The LinVst3-X server can be killed
 
