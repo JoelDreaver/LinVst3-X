@@ -65,10 +65,6 @@ and then use the pid to kill the lin-vst3-server
 
 kill -15 pid
 
-or
-
-kill -9 pid
-
 -------
 
 LinVst3-X binaries are on the releases page (under Assets) https://github.com/osxmidi/LinVst3-X/releases
