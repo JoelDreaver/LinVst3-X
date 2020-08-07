@@ -120,7 +120,7 @@ Then change into the LinVst3-X folder and run make and then sudo make install
 
 Then use the batch name conversion utilities (in the convert/binaries folder) to name convert linvst3x.so to the vst3 plugin names ie first select linvst3x.so and then select the ~/.wine/drive_c/Program Files/Common Files/VST3 folder https://github.com/osxmidi/LinVst/wiki
 
-Currently builds ok with the vst-sdk_3.7.0_build-116_2020-07-31 sdk.
+Currently builds ok with the vst-sdk_3.7.0_build-116_2020-07-31 sdk https://download.steinberg.net/sdk_downloads/vst-sdk_3.7.0_build-116_2020-07-31.zip
 
 For previous sdk versions
 
