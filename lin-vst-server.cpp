@@ -1728,7 +1728,6 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     case audioMasterSizeWindow:
 {
 #ifdef EMBED
-#ifndef TRACKTIONWM
 #ifdef EMBEDRESIZE
    int opcodegui = 123456789;
 	
@@ -1740,15 +1739,19 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     // ShowWindow(hWnd, SW_HIDE);
     // SetWindowPos(hWnd, HWND_TOP, 0, 0, guiresizewidth, guiresizeheight, 0);
 	    
+#ifdef TRACKTIONWM
+    if(remoteVSTServerInstance->hosttracktion == 1)
+    SetWindowPos(remoteVSTServerInstance->hWnd, HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN) + remoteVSTServerInstance->offset.x, GetSystemMetrics(SM_YVIRTUALSCREEN) + remoteVSTServerInstance->offset.y, index, value, 0); 
+#endif	    
+	    
     writeOpcodering(&m_shmControl->ringBuffer, (RemotePluginOpcode)opcodegui);
     writeIntring(&m_shmControl->ringBuffer, index);
     writeIntring(&m_shmControl->ringBuffer, value);
     commitWrite(&m_shmControl->ringBuffer);
     waitForServer();
-    guiupdate = 1;
+//    guiupdate = 1;
     rv = 1;
     }
-#endif
 #endif
 #else	
      if (hWnd && !exiting && effectrun && guiVisible)
@@ -1951,11 +1954,11 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     if(!exiting)
     {	
     writeOpcodering(&m_shmControl->ringBuffer, (RemotePluginOpcode)opcode);
-    strcpy(&m_shm[FIXED_SHM_SIZE3], (char*)ptr);
+    strcpy(&remoteVSTServerInstance->m_shm3[FIXED_SHM_SIZE3], (char*)ptr);
     commitWrite(&m_shmControl->ringBuffer);
     waitForServer();
 
-    memcpy(&retval, &m_shm3[FIXED_SHM_SIZE3], sizeof(int));
+    memcpy(&retval, &remoteVSTServerInstance->m_shm3[FIXED_SHM_SIZE3 + 512], sizeof(int));
     rv = retval;  
     }
     }
