@@ -495,7 +495,7 @@ int RemotePluginServer::sizeShm()
 
     ptr = (int *)m_shm;
 
-    *ptr = 174;
+    *ptr = 200;
 	
      return 0;	
 }
@@ -1190,6 +1190,22 @@ void RemotePluginServer::dispatchParEvents()
 
     switch (opcode)
     {
+		
+    case RemotePluginGetParameterName:
+        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterName(readIntring(&m_shmControl5->ringBuffer)).c_str());
+        break;
+        
+    case RemotePluginGetParameterLabel:
+        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterLabel(readIntring(&m_shmControl5->ringBuffer)).c_str());
+        break; 
+        
+    case RemotePluginGetParameterDisplay:
+        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterDisplay(readIntring(&m_shmControl5->ringBuffer)).c_str());
+        break;  
+        
+    case RemotePluginGetParameterCount:
+        writeInt(&m_shm[FIXED_SHM_SIZE], getParameterCount());
+        break;               		
 		    
     case RemotePluginDoVoid:
     {
@@ -1501,19 +1517,7 @@ void RemotePluginServer::dispatchControlEvents()
         break;
     }  		    
 #endif	
-		    
-    case RemotePluginGetParameterName:
-        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterName(readIntring(&m_shmControl3->ringBuffer)).c_str());
-        break;
-        
-    case RemotePluginGetParameterLabel:
-        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterLabel(readIntring(&m_shmControl3->ringBuffer)).c_str());
-        break; 
-        
-    case RemotePluginGetParameterDisplay:
-        strcpy(&m_shm[FIXED_SHM_SIZE], getParameterDisplay(readIntring(&m_shmControl3->ringBuffer)).c_str());
-        break;  
-		    
+		    		    
     case RemotePluginUniqueID:
         writeInt(&m_shm[FIXED_SHM_SIZE], getUID());
         break;
@@ -1527,10 +1531,6 @@ void RemotePluginServer::dispatchControlEvents()
         m_delay = getinitialDelay();
         writeInt(&m_shm[FIXED_SHM_SIZE], m_delay);
         break;
-
-    case RemotePluginGetParameterCount:
-        writeInt(&m_shm[FIXED_SHM_SIZE], getParameterCount());
-        break;        
         
      case RemotePluginGetProgramCount:
         writeInt(&m_shm[FIXED_SHM_SIZE], getProgramCount());

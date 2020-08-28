@@ -667,6 +667,10 @@ void RemoteVSTServer::EffectOpen()
 #ifdef TRACKTIONWM 
 	if (haveGui == true)
     {
+		
+        offset.x = 0;
+        offset.y = 0;   
+        		
     	memset(&wclass2, 0, sizeof(WNDCLASSEX));
         wclass2.cbSize = sizeof(WNDCLASSEX);
         wclass2.style = 0;
@@ -995,15 +999,6 @@ void RemoteVSTServer::effDoVoid(int opcode)
 //        hostreaper = 1;
          return;
     }
-#ifdef EMBED
-#ifdef TRACKTIONWM  
-    if (opcode == 67584930)
-    {
-        hosttracktion = 1;
-         return;
-    }	
-#endif	
-#endif
 	
     if (opcode == effClose)
     {
@@ -1044,6 +1039,17 @@ int RemoteVSTServer::effDoVoid2(int opcode, int index, int value, float opt)
     vst2wrap->resume ();
     }
     */
+    
+  #ifdef EMBED
+#ifdef TRACKTIONWM  
+    if (opcode == 67584930)
+    {
+        hosttracktion = 1;
+        return offset.y;
+    }	
+#endif	
+#endif
+    
 }
 
 std::string RemoteVSTServer::getEffString(int opcode, int index)
@@ -2472,15 +2478,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     cout << "Copyright (c) 2004-2006 Chris Cannam" << endl;
     #ifdef EMBED
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 1.7.2-32bit" << endl;
+    cout << "LinVst3-X version 2.0.0-32bit" << endl;
     #else
-    cout << "LinVst3-X version 1.7.2-64bit" << endl;    
+    cout << "LinVst3-X version 2.0.0-64bit" << endl;    
     #endif
     #else
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 1.7.2st-32bit" << endl;
+    cout << "LinVst3-X version 2.0.0st-32bit" << endl;
     #else
-    cout << "LinVst3-X version 1.7.2st-64bit" << endl;    
+    cout << "LinVst3-X version 2.0.0st-64bit" << endl;    
     #endif    
     #endif
     

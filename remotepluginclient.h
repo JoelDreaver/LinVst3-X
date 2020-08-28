@@ -239,6 +239,11 @@ VstTimeInfo *timeInfo;
 #ifdef WAVES
 int wavesthread;
 #endif
+
+#ifdef TRACKTIONWM  
+int waveformid;
+int hosttracktion;
+#endif    
     
 struct vinfo
 {
