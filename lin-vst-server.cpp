@@ -2677,11 +2677,7 @@ DWORD dwElapsed;
     sched_yield();	       
     if(hWndvst[pidx])
     DestroyWindow(hWndvst[pidx]);  
-#else
-    sched_yield();	       
-    if(hWndvst[pidx])
-    DestroyWindow(hWndvst[pidx]);  
-#endif	
+#endif
 #ifdef WCLASS       
     UnregisterClassA(remoteVSTServerInstance2[pidx]->wname, GetModuleHandle(0));
 #endif    
