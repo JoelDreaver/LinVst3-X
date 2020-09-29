@@ -7,40 +7,10 @@
 #define __cdecl
 //#endif
 
-#ifdef VESTIGE
-typedef int16_t VstInt16;	
-typedef int32_t VstInt32;		
-typedef int64_t VstInt64;		
-typedef intptr_t VstIntPtr;
-#define VESTIGECALLBACK __cdecl
-#include "vestige.h"
-#else
-#include "pluginterfaces/vst2.x/aeffectx.h"
-#endif
-
-
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
-
 #include <shellapi.h>
-
-#include "vst2wrapper.sdk.cpp"
-#include "vst2wrapper.h"
-#include "public.sdk/source/vst/hosting/module.h"
-
-extern "C"
-{
-	typedef bool (PLUGIN_API *InitModuleProc) ();
-	typedef bool (PLUGIN_API *ExitModuleProc) ();
-}
-static const Steinberg::FIDString kInitModuleProcName = "InitDll";
-static const Steinberg::FIDString kExitModuleProcName = "ExitDll";
-
-#define APPLICATION_CLASS_NAME "dssi_vst"
-
-#define OLD_PLUGIN_ENTRY_POINT "main"
-#define NEW_PLUGIN_ENTRY_POINT "VSTPluginMain"
 
 #ifdef VESTIGE
 typedef int16_t VstInt16;	
@@ -58,6 +28,23 @@ typedef AEffect *(VESTIGECALLBACK *VstEntry)(audioMasterCallback audioMaster);
 #else
 typedef AEffect *(VSTCALLBACK *VstEntry)(audioMasterCallback audioMaster);
 #endif
+
+#include "vst2wrapper.sdk.cpp"
+#include "vst2wrapper.h"
+#include "public.sdk/source/vst/hosting/module.h"
+
+extern "C"
+{
+	typedef bool (PLUGIN_API *InitModuleProc) ();
+	typedef bool (PLUGIN_API *ExitModuleProc) ();
+}
+static const Steinberg::FIDString kInitModuleProcName = "InitDll";
+static const Steinberg::FIDString kExitModuleProcName = "ExitDll";
+
+#define APPLICATION_CLASS_NAME "dssi_vst"
+
+#define OLD_PLUGIN_ENTRY_POINT "main"
+#define NEW_PLUGIN_ENTRY_POINT "VSTPluginMain"
 
 using namespace std;
 
@@ -200,7 +187,7 @@ int numargs;
     int vst2uid;
     Steinberg::IPluginFactory* factory;
    
-    cout << "LinVst3 Vst3 Test: " << cmdline << endl;
+    cout << "LinVst3 Vst3 Test: " << cmdline << endl;	
 
     args = CommandLineToArgvW(GetCommandLineW(), &numargs);
    
@@ -270,6 +257,11 @@ int numargs;
     {
     printf("NoEditor\n");
     
+	printf("NumInputs %d\n", vst2wrap->numinputs);
+    printf("NumOutputs %d\n", vst2wrap->numoutputs);
+		
+	cout << "Maker " << getMaker(vst2wrap)	<< endl;	    
+    
     vst2wrap->suspend ();
     
     if(vst2wrap)
@@ -279,7 +271,12 @@ int numargs;
     factory->release ();   
       	
     if(libHandle)
-    FreeLibrary(libHandle);  	
+    {
+    ExitModuleProc exitProc = (ExitModuleProc)::GetProcAddress ((HMODULE)libHandle, kExitModuleProcName);
+	if (exitProc)
+	exitProc ();
+    FreeLibrary(libHandle);	
+    } 	  	
 	exit(0);    
     
     }
@@ -317,7 +314,12 @@ int numargs;
     factory->release ();   
       	
     if(libHandle)
-    FreeLibrary(libHandle);  	
+    {
+    ExitModuleProc exitProc = (ExitModuleProc)::GetProcAddress ((HMODULE)libHandle, kExitModuleProcName);
+	if (exitProc)
+	exitProc ();
+    FreeLibrary(libHandle);	
+    } 	  	 	
 	exit(0);
 	}
 
@@ -337,7 +339,12 @@ int numargs;
     factory->release ();    
 		
     if(libHandle)
-    FreeLibrary(libHandle);  	
+    {
+    ExitModuleProc exitProc = (ExitModuleProc)::GetProcAddress ((HMODULE)libHandle, kExitModuleProcName);
+	if (exitProc)
+	exitProc ();
+    FreeLibrary(libHandle);	
+    } 	  	 	
 	exit(0);		
 	}
 	
@@ -357,7 +364,12 @@ int numargs;
     if (factory)
     factory->release ();     	
     if(libHandle)
-    FreeLibrary(libHandle);  	
+    {
+    ExitModuleProc exitProc = (ExitModuleProc)::GetProcAddress ((HMODULE)libHandle, kExitModuleProcName);
+	if (exitProc)
+	exitProc ();
+    FreeLibrary(libHandle);	
+    } 	  	 	
 	exit(0);
     }
 	
@@ -389,8 +401,11 @@ int numargs;
     }	
     
     vst2wrap->editor->close ();
+       
+    KillTimer(hWnd, timerval);
      
-	DestroyWindow(hWnd);	
+	DestroyWindow(hWnd);
+		
 	UnregisterClassA(APPLICATION_CLASS_NAME, GetModuleHandle(0));
 	        
     vst2wrap->suspend ();
@@ -402,6 +417,13 @@ int numargs;
     factory->release ();    
 	
     if(libHandle)
-    FreeLibrary(libHandle);    	  	
+    {
+    ExitModuleProc exitProc = (ExitModuleProc)::GetProcAddress ((HMODULE)libHandle, kExitModuleProcName);
+	if (exitProc)
+	exitProc ();
+    FreeLibrary(libHandle);	
+    } 	  	
+          
+    exit(0);    
 }
 
