@@ -12,7 +12,7 @@ testvst3.exe is for 64 bit vst3's only
 
 If TestVst3 is run from a terminal and the output is looked at, then sometimes there can be an unimplemented function error in some dll and that dll can then be overriden.
 
-Some vst3 plugins might not work due to Wines current capabilities or for some other reason.
+Some vst3's might not work due to Wines current capabilities or for some other reason.
 
 Some vst3 plugins rely on the d2d1 dll which is not totally implemented in current Wine.
 
@@ -98,4 +98,3 @@ libsqlite3-dev
 libxcb-keysyms1-dev
 
 -------
-
