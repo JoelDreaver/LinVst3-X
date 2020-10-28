@@ -67,7 +67,7 @@ public:
 
 	//--- ------------------------------------------------------
 	//--- BaseWrapper ------------------------------------------
-	bool init (audioMasterCallback audioMaster, AEffect *plugin);
+	bool init ();
 	void _canDoubleReplacing (bool val);
 	void _setInitialDelay (int32 delay);
 	void _noTail (bool val);
