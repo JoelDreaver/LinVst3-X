@@ -2486,15 +2486,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     cout << "Copyright (c) 2004-2006 Chris Cannam" << endl;
     #ifdef EMBED
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.1.0-32bit" << endl;
+    cout << "LinVst3-X version 2.1.5-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.1.0-64bit" << endl;    
+    cout << "LinVst3-X version 2.1.5-64bit" << endl;    
     #endif
     #else
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.1.0st-32bit" << endl;
+    cout << "LinVst3-X version 2.1.5st-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.1.0st-64bit" << endl;    
+    cout << "LinVst3-X version 2.1.5st-64bit" << endl;    
     #endif    
     #endif
     
