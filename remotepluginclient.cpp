@@ -135,8 +135,8 @@ else
 
 #endif
 
-   while (dataAvailable(&m_shmControl->ringBuffer) && theEffect) 
-   {	    
+    while (dataAvailable(&m_shmControl->ringBuffer) && theEffect) 
+    {    
 
     if(m_threadbreak)
     break;
@@ -151,15 +151,15 @@ else
                     val = readIntring(&m_shmControl->ringBuffer);
                     timeInfo = (VstTimeInfo *) m_audioMaster(theEffect, audioMasterGetTime, 0, val, 0, 0);
                     if(timeInfo)
-                    {
+                    {                    
                     memcpy((VstTimeInfo*)&m_shm3[FIXED_SHM_SIZE3 - sizeof(VstTimeInfo)], timeInfo, sizeof(VstTimeInfo));
                     }
                     break;
 
-               case audioMasterIOChanged:
+                case audioMasterIOChanged:
                 
                     memcpy(&am, &m_shm3[FIXED_SHM_SIZE3], sizeof(am));
-                  //   printf("client %d %d %d \n", am.incount, am.outcount, am.delay);
+                     printf("client %d %d %d \n", am.incount, am.outcount, am.delay);
                  //   if((am.incount != m_numInputs) || (am.outcount != m_numOutputs) || (am.delay != m_delay))
                   //  {
 					if((am.incount != m_numInputs) || (am.outcount != m_numOutputs))
@@ -167,7 +167,7 @@ else
                     if ((am.incount + am.outcount) * m_bufferSize * sizeof(float) < (PROCESSSIZE))
                     {
 						
-						// printf("up\n");
+						printf("up\n");
 						
                     m_updateio = 1;
                     m_updatein = am.incount;
@@ -180,7 +180,7 @@ else
                     {
 					m_delay = am.delay;	
                     theEffect->initialDelay = am.delay;
-                   // printf("del\n");
+                    printf("del\n");
 				    }
                     retval = 0;
                     retval = m_audioMaster(theEffect, audioMasterIOChanged, 0, 0, 0, 0);
@@ -270,11 +270,11 @@ else
                    case audioMasterCanDo:    
                    retval = 0;
                    retstr2[0]='\0';
-                   strcpy(retstr2, &m_shm3[FIXED_SHM_SIZE3]);                   
-                   retval = m_audioMaster(theEffect, audioMasterCanDo, 0, 0, (char *) retstr2, 0);                   
+                   strcpy(retstr2, &m_shm[FIXED_SHM_SIZE3]);
+                   retval = m_audioMaster(theEffect, audioMasterCanDo, 0, 0, (char *) retstr2, 0);
                    memcpy(&m_shm3[FIXED_SHM_SIZE3 + 512], &retval, sizeof(int));
                    break;  
-#endif	
+#endif				
                    case audioMasterGetVendorString:
                    retstr2[0]='\0';
                    retval = m_audioMaster(theEffect, audioMasterGetVendorString, 0, 0, (char *) retstr2, 0);                   
@@ -301,11 +301,11 @@ else
                     retRect.bottom = readIntring(&m_shmControl->ringBuffer);
                     retRect.left = 0;
                     retRect.top = 0;
-		            width = retRect.right;
+	        	    width = retRect.right;
                     height = retRect.bottom;
                     if(display && parent && child)
                     {
-	        	    if(reaperid == 0)
+		            if(reaperid == 0)
 	        	    retval = m_audioMaster(theEffect, audioMasterSizeWindow, width, height, 0, 0);                   							
                     XUnmapWindow(display, child);
                   //  XResizeWindow(display, parent, width, height);
@@ -325,7 +325,7 @@ else
                    case disconnectserver: 
                    m_inexcept = 1;
                    usleep(100000);
-                //   memset (theEffect, 0, sizeof(AEffect));
+                 //  memset (theEffect, 0, sizeof(AEffect));
                 //   theEffect = 0;          
                    waitForServer2exit(); 
                    waitForServer3exit(); 
@@ -540,11 +540,11 @@ RemotePluginClient::RemotePluginClient(audioMasterCallback theMaster) :
     winm(0),
 #ifdef EMBEDRESIZE
     resizedone(0),
-#endif         
+#endif           
 #ifdef TRACKTIONWM     
     waveformid(0),
     hosttracktion(0),
-#endif    
+#endif        
 #ifdef EMBEDDRAG
     x11_win(0),
     pparent(0),
@@ -799,19 +799,21 @@ RemotePluginClient::~RemotePluginClient()
     waitForServer3exit(); 
     waitForServer4exit(); 
     waitForServer5exit();        
-	 
+		 
     cleanup();
 
     /*
     if (theEffect)
     delete theEffect; 
     */
-/*	 
+	 
+/*
 #ifdef EMBED	 
     if (winm)
     delete winm; 
 #endif	 
-*/ 	
+*/ 
+	 
 #ifdef CHUNKBUF
     if (chunk_ptr)
     free(chunk_ptr);
@@ -830,7 +832,7 @@ ptr = (int *)m_shm;
 
     for (int i=0;i<40000;i++)
     {
-        if (*ptr == 315)
+        if (*ptr == 210)
          {
             startok = 1;
             break;
@@ -865,6 +867,7 @@ ptr = (int *)m_shm;
     }
 #endif
 #endif
+
     /*
     theEffect = new AEffect;	
     if(!theEffect)
@@ -872,20 +875,20 @@ ptr = (int *)m_shm;
     *ptr = 4;
     m_runok = 1;   
     cleanup();	    
-    }       
-   */
-
-   theEffect = &theEffect2;	
+    }   
+    */
+	
+    theEffect = &theEffect2;	
 
 #ifdef EMBED
-    /*	
+    /*
     winm = new winmessage;
     if(!winm)
     {
     *ptr = 4;
     m_runok = 1;   
     cleanup();	    
-    } 
+    }  
     */
     winm = &winm2;
 #endif	
@@ -1150,12 +1153,24 @@ int RemotePluginClient::sizeShm()
     return 0;	
 }
 
-float RemotePluginClient::getVersion()
+float   RemotePluginClient::getVersion()
 {
     writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginGetVersion);
     commitWrite(&m_shmControl5->ringBuffer);
     waitForServer5();  
-    return readFloat(&m_shm[FIXED_SHM_SIZE]);
+    return readFloat2(&m_shm[FIXED_SHM_SIZE]);
+}
+
+int RemotePluginClient::getUID()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginUniqueID);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    return readInt(&m_shm[FIXED_SHM_SIZE]);
 }
 
 std::string RemotePluginClient::getName()
@@ -1236,13 +1251,74 @@ std::string RemotePluginClient::getEffString(int opcode, int index)
     return &m_shm[FIXED_SHM_SIZE];
 }
 
+int RemotePluginClient::getFlags()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetFlags);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    return readInt(&m_shm[FIXED_SHM_SIZE]);
+}
+
+int RemotePluginClient::getinitialDelay()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetinitialDelay);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    m_delay = readInt(&m_shm[FIXED_SHM_SIZE]);
+    return m_delay;
+}
+
+int RemotePluginClient::getInputCount()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+
+    // writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginGetInputCount);
+    // m_numInputs = readInt(m_processResponseFd);
+
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetInputCount);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    m_numInputs = readInt(&m_shm[FIXED_SHM_SIZE]);
+
+    return m_numInputs;
+}
+
+int RemotePluginClient::getOutputCount()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+
+    // writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginGetOutputCount);
+    // m_numOutputs = readInt(m_processResponseFd);
+
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetOutputCount);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    m_numOutputs = readInt(&m_shm[FIXED_SHM_SIZE]);
+
+    return m_numOutputs;
+}
+
 std::string RemotePluginClient::getParameterName(int p)
 {
     writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginGetParameterName);
     writeIntring(&m_shmControl5->ringBuffer, p);
     commitWrite(&m_shmControl5->ringBuffer);
-    waitForServer5();   
-    return &m_shm[FIXED_SHM_SIZE];			
+    waitForServer5();  
+    return &m_shm[FIXED_SHM_SIZE];
 }
 
 std::string RemotePluginClient::getParameterLabel(int p)
@@ -1251,7 +1327,7 @@ std::string RemotePluginClient::getParameterLabel(int p)
     writeIntring(&m_shmControl5->ringBuffer, p);
     commitWrite(&m_shmControl5->ringBuffer);
     waitForServer5();  
-    return &m_shm[FIXED_SHM_SIZE];	
+    return &m_shm[FIXED_SHM_SIZE];
 }
 
 std::string RemotePluginClient::getParameterDisplay(int p)
@@ -1314,7 +1390,7 @@ RemotePluginClient::getParameter(int p)
     writeIntring(&m_shmControl4->ringBuffer, p);
     commitWrite(&m_shmControl4->ringBuffer);
     waitForServer4();
-    return readFloat(&m_shm2[FIXED_SHM_SIZE2 + 1024]);
+    return readFloat2(&m_shm2[FIXED_SHM_SIZE2 + 1024]);
 }
 
 float RemotePluginClient::getParameterDefault(int p)
@@ -1323,7 +1399,7 @@ float RemotePluginClient::getParameterDefault(int p)
     writeIntring(&m_shmControl5->ringBuffer, p);
     commitWrite(&m_shmControl5->ringBuffer);
     waitForServer5();  
-    return readFloat(&m_shm[FIXED_SHM_SIZE]);
+    return readFloat2(&m_shm[FIXED_SHM_SIZE]);
 }
 
 void RemotePluginClient::getParameters(int p0, int pn, float *v)
@@ -1336,6 +1412,43 @@ void RemotePluginClient::getParameters(int p0, int pn, float *v)
     tryRead(&m_shm[FIXED_SHM_SIZE], v, (pn - p0 + 1) * sizeof(float));
 }
 
+int RemotePluginClient::getProgramCount()
+{
+    if (m_inexcept == 1 || m_finishaudio == 1)
+    {
+        return 0;
+    }
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramCount);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    return readInt(&m_shm[FIXED_SHM_SIZE]);
+}
+
+int RemotePluginClient::getProgramNameIndexed(int n, char *ptr)
+{
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramNameIndexed);
+    writeIntring(&m_shmControl3->ringBuffer, n);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    strcpy(ptr, &m_shm[FIXED_SHM_SIZE]);
+    return readInt(&m_shm[FIXED_SHM_SIZE + 512]);
+}
+
+std::string RemotePluginClient::getProgramName()
+{
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramName);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    return &m_shm[FIXED_SHM_SIZE];
+}
+
+void RemotePluginClient::setCurrentProgram(int n)
+{
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginSetCurrentProgram);
+    writeIntring(&m_shmControl3->ringBuffer, n);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+}
 
 #ifdef SEM
 
@@ -1614,13 +1727,12 @@ void RemotePluginClient::process(float **inputs, float **outputs, int sampleFram
     commitWrite(&m_shmControl2->ringBuffer);
     waitForServer2();  
     m_updateio = 0;
-    // printf("update1\n");
     return;
     }
 	
     if (((m_numInputs + m_numOutputs) * m_bufferSize * sizeof(float)) >= (PROCESSSIZE))
     return;
-	
+        
 #ifdef NEWTIME	
     if(m_audioMaster && theEffect && m_shm3)
     {
@@ -1628,8 +1740,8 @@ void RemotePluginClient::process(float **inputs, float **outputs, int sampleFram
 
 //    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, 0, 0, 0);
 	    
-    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid | kVstTimeSigValid, 0, 0);	    
-
+    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid | kVstTimeSigValid, 0, 0);
+	    
     if(timeInfo)
     {    
  //   printf("%f\n", timeInfo->sampleRate);
@@ -1637,7 +1749,7 @@ void RemotePluginClient::process(float **inputs, float **outputs, int sampleFram
     memcpy((VstTimeInfo*)&m_shm3[FIXED_SHM_SIZE3 - sizeof(VstTimeInfo)], timeInfo, sizeof(VstTimeInfo));
     }
     } 
-#endif                	 	
+#endif	
 
     size_t blocksz = sampleFrames * sizeof(float);
 
@@ -1691,13 +1803,12 @@ void RemotePluginClient::processdouble(double **inputs, double **outputs, int sa
     commitWrite(&m_shmControl2->ringBuffer);
     waitForServer2();  
     m_updateio = 0;
-    // printf("update2\n");
     return;
     }
 	
     if (((m_numInputs + m_numOutputs) * m_bufferSize * sizeof(double)) >= (PROCESSSIZE))
     return;
-	
+    
 #ifdef NEWTIME	
     if(m_audioMaster && theEffect && m_shm3)
     {
@@ -1705,8 +1816,8 @@ void RemotePluginClient::processdouble(double **inputs, double **outputs, int sa
 
 //    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, 0, 0, 0);
 	    
-    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid | kVstTimeSigValid, 0, 0);		    
-
+    timeInfo = (VstTimeInfo *)m_audioMaster(theEffect, audioMasterGetTime, 0, kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid | kVstTimeSigValid, 0, 0);
+	    
     if(timeInfo)
     {    
  //   printf("%f\n", timeInfo->sampleRate);
@@ -1714,8 +1825,8 @@ void RemotePluginClient::processdouble(double **inputs, double **outputs, int sa
     memcpy((VstTimeInfo*)&m_shm3[FIXED_SHM_SIZE3 - sizeof(VstTimeInfo)], timeInfo, sizeof(VstTimeInfo));
     }
     } 
-#endif                	
-
+#endif	
+    
     size_t blocksz = sampleFrames * sizeof(double);
 
     if(m_numInputs > 0)
@@ -1759,7 +1870,7 @@ int RemotePluginClient::processVstEvents(VstEvents *evnts)
     int eventnum;
     int *ptr;
     int sizeidx = 0;
-	
+
     if(!m_shm)
     return 0;    
 
@@ -1767,7 +1878,7 @@ int RemotePluginClient::processVstEvents(VstEvents *evnts)
     return 0;
 
     if ((evnts->numEvents <= 0) || (m_inexcept == 1) || (m_finishaudio == 1))
-    return 0;        
+    return 0;            
 
     ptr = (int *)m_shm2;
     eventnum = evnts->numEvents;
@@ -1776,7 +1887,7 @@ int RemotePluginClient::processVstEvents(VstEvents *evnts)
     if (eventnum > VSTSIZE)
     eventnum = VSTSIZE;            
 
-    for (int i = 0; i < eventnum; i++)
+    for (int i = 0; i < evnts->numEvents; i++)
     {
         VstEvent* pEvent = evnts->events[i];
 
@@ -1804,41 +1915,7 @@ int RemotePluginClient::processVstEvents(VstEvents *evnts)
     return ret;
 }
 
-#ifdef VESTIGE
-bool RemotePluginClient::getEffInProp(int index, void *ptr)
-{
-char ptr2[sizeof(vinfo)];
-bool b;
-
-    writeOpcodering(&m_shmControl5->ringBuffer, RemoteInProp);
-    writeIntring(&m_shmControl5->ringBuffer, index);
-    commitWrite(&m_shmControl5->ringBuffer);
-    waitForServer5();  
- 
-   tryRead(&m_shm2[FIXED_SHM_SIZE2], &b, sizeof(bool));
-   tryRead(&m_shm2[FIXED_SHM_SIZE2 - sizeof(vinfo)], &ptr2, sizeof(vinfo));
-   memcpy(ptr, &ptr2, sizeof(vinfo));
-
-  return b;
-}
-
-bool RemotePluginClient::getEffOutProp(int index, void *ptr)
-{
-char ptr2[sizeof(vinfo)];
-bool b;
-
-    writeOpcodering(&m_shmControl5->ringBuffer, RemoteOutProp);
-    writeIntring(&m_shmControl5->ringBuffer, index);
-    commitWrite(&m_shmControl5->ringBuffer);
-    waitForServer5();  
-
-    tryRead(&m_shm2[FIXED_SHM_SIZE2], &b, sizeof(bool));
-    tryRead(&m_shm2[FIXED_SHM_SIZE2 - sizeof(vinfo)], &ptr2, sizeof(vinfo));
-    memcpy(ptr, &ptr2, sizeof(vinfo));
-
-    return b;
-}
-#else
+#ifndef VESTIGE
 bool RemotePluginClient::getEffInProp(int index, void *ptr)
 {
 VstPinProperties ptr2;
@@ -2146,154 +2223,6 @@ int RemotePluginClient::effVoidOp2(int opcode, int index, int value, float opt)
         return readInt(&m_shm[FIXED_SHM_SIZE]);
 }
 
-int RemotePluginClient::canBeAutomated(int param)
-{
-    writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginCanBeAutomated);
-    writeIntring(&m_shmControl5->ringBuffer, param);
-    commitWrite(&m_shmControl5->ringBuffer);
-    waitForServer5();  
-    return readInt(&m_shm[FIXED_SHM_SIZE]);
-}
-
-int RemotePluginClient::EffectOpen()
-{
-    if(m_threadinit == 1)
-    return 0;
-	
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginEffectOpen);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3(); 
-	
-#ifdef WAVES
-    wavesthread = readInt(&m_shm[FIXED_SHM_SIZE]);
-   if(wavesthread == 1)
-   theEffect->flags |= effFlagsHasEditor; 
-#endif
-	
-    m_threadinit = 1;
-	
-    return 1;
-}
-
-int RemotePluginClient::getFlags()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetFlags);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    return readInt(&m_shm[FIXED_SHM_SIZE]);
-}
-
-int RemotePluginClient::getinitialDelay()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetinitialDelay);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    m_delay = readInt(&m_shm[FIXED_SHM_SIZE]);
-    return m_delay;
-}
-
-int RemotePluginClient::getInputCount()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-
-    // writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetInputCount);
-    // m_numInputs = readInt(m_processResponseFd);
-
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetInputCount);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    m_numInputs = readInt(&m_shm[FIXED_SHM_SIZE]);
-
-    return m_numInputs;
-}
-
-int RemotePluginClient::getOutputCount()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-
-    // writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetOutputCount);
-    // m_numOutputs = readInt(m_processResponseFd);
-
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetOutputCount);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    m_numOutputs = readInt(&m_shm[FIXED_SHM_SIZE]);
-
-    return m_numOutputs;
-}
-
-int RemotePluginClient::getProgramCount()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramCount);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    return readInt(&m_shm[FIXED_SHM_SIZE]);
-}
-
-int RemotePluginClient::getUID()
-{
-    if (m_inexcept == 1 || m_finishaudio == 1)
-    {
-        return 0;
-    }
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginUniqueID);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    return readInt(&m_shm[FIXED_SHM_SIZE]);
-}
-
-int RemotePluginClient::getProgramNameIndexed(int n, char *ptr)
-{
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramNameIndexed);
-    writeIntring(&m_shmControl3->ringBuffer, n);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();    
-    strcpy(ptr, &m_shm[FIXED_SHM_SIZE]);
-    return readInt(&m_shm[FIXED_SHM_SIZE + 512]);
-}
-
-std::string RemotePluginClient::getProgramName()
-{
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgramName);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    return &m_shm[FIXED_SHM_SIZE];
-}
-
-void RemotePluginClient::setCurrentProgram(int n)
-{
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginSetCurrentProgram);
-    writeIntring(&m_shmControl3->ringBuffer, n);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-}
-
-int RemotePluginClient::getProgram()
-{
-    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgram);
-    commitWrite(&m_shmControl3->ringBuffer);
-    waitForServer3();  
-    return readInt(&m_shm[FIXED_SHM_SIZE]);
-}
-
 int RemotePluginClient::getChunk(void **ptr, int bank_prg)
 {
 #ifdef CHUNKBUF
@@ -2473,6 +2402,42 @@ int chunkrem;
 #endif
 }
 
+int RemotePluginClient::canBeAutomated(int param)
+{
+    writeOpcodering(&m_shmControl5->ringBuffer, RemotePluginCanBeAutomated);
+    writeIntring(&m_shmControl5->ringBuffer, param);
+    commitWrite(&m_shmControl5->ringBuffer);
+    waitForServer5();  
+    return readInt(&m_shm[FIXED_SHM_SIZE]);
+}
+
+int RemotePluginClient::getProgram()
+{
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginGetProgram);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3();  
+    return readInt(&m_shm[FIXED_SHM_SIZE]);
+}
+
+int RemotePluginClient::EffectOpen()
+{
+    if(m_threadinit == 1)
+    return 0;
+	
+    writeOpcodering(&m_shmControl3->ringBuffer, RemotePluginEffectOpen);
+    commitWrite(&m_shmControl3->ringBuffer);
+    waitForServer3(); 
+	
+#ifdef WAVES
+    wavesthread = readInt(&m_shm[FIXED_SHM_SIZE]);
+   if(wavesthread == 1)
+   theEffect->flags |= effFlagsHasEditor; 
+#endif
+	
+    m_threadinit = 1;
+	
+    return 1;
+}
 
 void RemotePluginClient::rdwr_tryReadring(RingBuffer *ringbuf, void *buf, size_t count, const char *file, int line)
 {
