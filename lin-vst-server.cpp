@@ -336,8 +336,6 @@ VstIntPtr rv = 0;
     VstEvents           vstev[VSTSIZE];
     AEffect             mplugin;
     AEffect*            mpluginptr;    
-    int                 bufferSize;
-    int                 sampleRate;
     bool                exiting;
     bool                exiting2;
     bool                effectrun;
@@ -407,8 +405,6 @@ RemoteVSTServer::RemoteVSTServer(std::string fileIdentifiers, std::string fallba
     RemotePluginServer(fileIdentifiers),
     m_name(fallbackName),
     m_maker(""),
-    bufferSize(512),
-    sampleRate(44100),
     setprogrammiss(0),
     hostreaper(0),
 #ifdef WAVES
@@ -632,6 +628,11 @@ void RemoteVSTServer::EffectOpen()
         
     sched_yield();    
     vst2wrap->suspend ();
+
+    sched_yield();     
+    vst2wrap->setBlockSize (bufferSize);
+    sched_yield();     
+    vst2wrap->setSampleRate (sampleRate);        
     
     char buffer[512];
     memset(buffer, 0, sizeof(buffer));
@@ -711,39 +712,6 @@ void RemoteVSTServer::EffectOpen()
 }        
 #endif
 
-#ifndef WCLASS
-	if (haveGui == true)
-    {
-    memset(wname, 0, 4096);
-    memset(wname2, 0, 4096);
-
-    sprintf(wname2, "%d", pidx);
-    strcpy(wname, m_name.c_str());
-    strcat(wname, wname2);
-      		
-	memset(&wclass[pidx], 0, sizeof(WNDCLASSEX));
-    wclass[pidx].cbSize = sizeof(WNDCLASSEX);
-    wclass[pidx].style = 0;
-	    // CS_HREDRAW | CS_VREDRAW;
-    wclass[pidx].lpfnWndProc = DefWindowProc;
-    wclass[pidx].cbClsExtra = 0;
-    wclass[pidx].cbWndExtra = 0;
-    wclass[pidx].hInstance = GetModuleHandle(0);
-    wclass[pidx].hIcon = LoadIcon(GetModuleHandle(0), wname);
-    wclass[pidx].hCursor = LoadCursor(0, IDI_APPLICATION);
-        // wclass[pidx].hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    wclass[pidx].lpszMenuName = "MENU_DSSI_VST";
-    wclass[pidx].lpszClassName = wname;
-    wclass[pidx].hIconSm = 0;
-
-    if (!RegisterClassEx(&wclass[pidx]))
-    {
-    printf("RegClassErr\n");
-	break;
-    }		
-    }	
-#endif
-
     struct amessage
     {
         int flags;
@@ -755,13 +723,14 @@ void RemoteVSTServer::EffectOpen()
     } am;
 
      //   am.flags = plugin->flags;
-        am.flags = getFlags();
+     //   am.flags = getFlags();
         // remoteVSTServerInstance->mpluginptr->flags;
-        am.pcount = getProgramCount();
-        am.parcount = getParameterCount();
+     //   am.pcount = getProgramCount();
+    //    am.parcount = getParameterCount();
         am.incount = getInputCount();
         am.outcount = getOutputCount();
         am.delay = getinitialDelay();
+        /*
 #ifdef DOUBLEP
         if(vst2wrap->doublereplacing == true)
         am.flags |= effFlagsCanDoubleReplacing; 
@@ -769,7 +738,14 @@ void RemoteVSTServer::EffectOpen()
 #else
         am.flags &= ~effFlagsCanDoubleReplacing;
         am.flags |= effFlagsCanReplacing; 
-#endif        
+#endif   
+*/
+
+    if((am.incount != m_numInputs) || (am.outcount != m_numOutputs) || (am.delay != m_delay))
+    {  
+
+
+printf("servup\n");     
 
     memcpy(&m_shm3[FIXED_SHM_SIZE3], &am, sizeof(am));
 
@@ -777,6 +753,8 @@ void RemoteVSTServer::EffectOpen()
    
     commitWrite(&m_shmControl->ringBuffer);
     waitForServer();	
+    
+}
 
     sched_yield();    	
     vst2wrap->resume ();	
@@ -1208,15 +1186,13 @@ DWORD dwWaitResult;
         tryWrite(&m_shm[FIXED_SHM_SIZE], winm, sizeof(winmessage));     
         return;
     }
-
-#ifdef WCLASS		
+		
       memset(wname, 0, 4096);
       memset(wname2, 0, 4096);
 
       sprintf(wname2, "%d", pidx);
       strcpy(wname, m_name.c_str());
-      strcat(wname, wname2);
-#endif      
+      strcat(wname, wname2);      
       
       ghWriteEvent = 0;
  
@@ -1275,18 +1251,21 @@ DWORD dwWaitResult;
        
       tryWrite(&m_shm[FIXED_SHM_SIZE], winm, sizeof(winmessage));
       
+      guiresizewidth = rect->right - rect->left;
+      guiresizeheight = rect->bottom - rect->top;     
+      
       sched_yield();
 }
 
 void RemoteVSTServer::hideGUI2()
 {
     hidegui = 1;  
-#ifdef XECLOSE    
+//#ifdef XECLOSE    
     while(hidegui == 1)
     {    
     sched_yield();
     } 
-#endif        				
+//#endif        				
 }	
 	
 void RemoteVSTServer::hideGUI()
@@ -1661,19 +1640,39 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
 		    
     if (!exiting && effectrun)
     {
-        am.pcount = plugin->numPrograms;
-        am.parcount = plugin->numParams;
+  //      am.pcount = plugin->numPrograms;
+  //      am.parcount = plugin->numParams;
         am.incount = plugin->numInputs;
         am.outcount = plugin->numOutputs;
         am.delay = plugin->initialDelay;
+        /*
 #ifndef DOUBLEP
         am.flags = plugin->flags;	
         am.flags &= ~effFlagsCanDoubleReplacing;
 #else
         am.flags = plugin->flags;	
 #endif
+* */
 
-        memcpy(&m_shm3[FIXED_SHM_SIZE3], &am, sizeof(am));
+ printf("server %d %d %d \n", am.incount, am.outcount, am.delay);
+
+    if((am.incount != m_numInputs) || (am.outcount != m_numOutputs) || (am.delay != m_delay))
+    {  
+		/*
+    if((am.incount != m_numInputs) || (am.outcount != m_numOutputs))
+    {
+    if ((am.incount + am.outcount) * m_bufferSize * sizeof(float) < (PROCESSSIZE))
+  	
+	}	
+   
+  */
+  
+  printf("delay\n");
+  
+    if(am.delay != m_delay)
+    m_delay = am.delay;
+  
+    memcpy(&m_shm3[FIXED_SHM_SIZE3], &am, sizeof(am));
 
     writeOpcodering(&m_shmControl->ringBuffer, (RemotePluginOpcode)opcode);
    
@@ -1682,7 +1681,9 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     retval = 0;
     memcpy(&retval, &m_shm3[FIXED_SHM_SIZE3], sizeof(int));
     rv = retval;
-	    
+   // }
+    }
+/*	    
     if((am.incount != m_numInputs) || (am.outcount != m_numOutputs))
     {
     if ((am.incount + am.outcount) * m_bufferSize * sizeof(float) < (PROCESSSIZE))
@@ -1692,6 +1693,7 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     m_updateout = am.outcount;
     }
     }
+    */
 /*
         AEffect* update = m_plugin;
         update->flags = am.flags;
@@ -1705,14 +1707,16 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
       }
         break;
 
-    case audioMasterSizeWindow:
+    case audioMasterSizeWindow:   
+#ifdef EMBEDRESIZE	    
 {
-#ifdef EMBED
-#ifdef EMBEDRESIZE
-   int opcodegui = 123456789;
-	
-    if (hWnd && guiVisible && !exiting && effectrun && (guiupdate == 0))
+    int opcodegui = 123456789;	
+#ifdef EMBED		
+    if (hWndvst[pidx] && guiVisible && !exiting && effectrun && (guiupdate == 0))
     {	
+    if((guiresizewidth == index) && (guiresizeheight == value))
+    break;
+    		
     guiresizewidth = index;
     guiresizeheight = value;
 
@@ -1720,8 +1724,8 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
     // SetWindowPos(hWnd, HWND_TOP, 0, 0, guiresizewidth, guiresizeheight, 0);
 	    
 #ifdef TRACKTIONWM
-    if(remoteVSTServerInstance->hosttracktion == 1)
-    SetWindowPos(remoteVSTServerInstance->hWnd, HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN) + remoteVSTServerInstance->offset.x, GetSystemMetrics(SM_YVIRTUALSCREEN) + remoteVSTServerInstance->offset.y, index, value, 0); 
+    if(hosttracktion == 1)
+    SetWindowPos(hWndvst[pidx], HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN) + offset.x, GetSystemMetrics(SM_YVIRTUALSCREEN) + offset.y, index, value, 0); 
 #endif	    
 	    
     writeOpcodering(&m_shmControl->ringBuffer, (RemotePluginOpcode)opcodegui);
@@ -1732,23 +1736,27 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
 //    guiupdate = 1;
     rv = 1;
     }
-#endif
 #else	
-     if (hWnd && !exiting && effectrun && guiVisible)
-     {
+    if (hWndvst[pidx] && guiVisible && !exiting && effectrun && (guiupdate == 0))
+    {
 /*
 //    SetWindowPos(hWnd, 0, 0, 0, index + 6, value + 25, SWP_NOMOVE | SWP_HIDEWINDOW);	
     SetWindowPos(hWnd, 0, 0, 0, index + 6, value + 25, SWP_NOMOVE);	
     ShowWindow(hWnd, SW_SHOWNORMAL);
     UpdateWindow(hWnd);
 */
+
+    if((guiresizewidth == index) && (guiresizeheight == value))
+    break;
+    
     guiresizewidth = index;
     guiresizeheight = value;
     guiupdate = 1;	
     rv = 1;
     }
+#endif	   
+} 
 #endif
-}	    
         break;
 
     case audioMasterGetSampleRate:
@@ -2033,8 +2041,8 @@ void RemoteVSTServer::guiUpdate()
 	
    if(guiupdatecount == 2)
    {
-   ShowWindow(hWnd, SW_SHOWNORMAL);
-   UpdateWindow(hWnd);
+   ShowWindow(hWndvst[pidx], SW_SHOWNORMAL);
+   UpdateWindow(hWndvst[pidx]);
    guiupdate = 0;
    guiupdatecount = 0;
    }
@@ -2042,9 +2050,9 @@ void RemoteVSTServer::guiUpdate()
 #endif
 #ifndef EMBED
 //      SetWindowPos(hWnd, 0, 0, 0, guiresizewidth + 6, guiresizeheight + 25, SWP_NOMOVE | SWP_HIDEWINDOW);	
-    SetWindowPos(hWnd, 0, 0, 0, guiresizewidth + 6, guiresizeheight + 25, SWP_NOMOVE);	
-    ShowWindow(hWnd, SW_SHOWNORMAL);
-    UpdateWindow(hWnd);
+    SetWindowPos(hWndvst[pidx], 0, 0, 0, guiresizewidth + 6, guiresizeheight + 25, SWP_NOMOVE);	
+    ShowWindow(hWndvst[pidx], SW_SHOWNORMAL);
+    UpdateWindow(hWndvst[pidx]);
     guiupdate = 0;
 #endif
 }
@@ -2478,15 +2486,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     cout << "Copyright (c) 2004-2006 Chris Cannam" << endl;
     #ifdef EMBED
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.0.0-32bit" << endl;
+    cout << "LinVst3-X version 2.1.0-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.0.0-64bit" << endl;    
+    cout << "LinVst3-X version 2.1.0-64bit" << endl;    
     #endif
     #else
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.0.0st-32bit" << endl;
+    cout << "LinVst3-X version 2.1.0st-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.0.0st-64bit" << endl;    
+    cout << "LinVst3-X version 2.1.0st-64bit" << endl;    
     #endif    
     #endif
     
@@ -2592,8 +2600,7 @@ DWORD dwElapsed;
 	sched_yield();	
 	int pidx = (int) msg.wParam;
 	if(remoteVSTServerInstance2[pidx])
-    {	
-#ifdef WCLASS	
+    {		
 	memset(&wclass[pidx], 0, sizeof(WNDCLASSEX));
     wclass[pidx].cbSize = sizeof(WNDCLASSEX);
     wclass[pidx].style = 0;
@@ -2616,7 +2623,6 @@ DWORD dwElapsed;
     SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);   
 	break;
     }
-#endif
     
     hWndvst[pidx] = 0;
 				
@@ -2672,15 +2678,12 @@ DWORD dwElapsed;
     sched_yield();	      
     if(timerval[pidx])
     KillTimer(hWndvst[pidx], timerval[pidx]);    
-    timerval[pidx] = 0; 
-#ifdef XECLOSE    
+    timerval[pidx] = 0;    
     sched_yield();	       
     if(hWndvst[pidx])
-    DestroyWindow(hWndvst[pidx]);  
-#endif
-#ifdef WCLASS       
+    DestroyWindow(hWndvst[pidx]);   
     UnregisterClassA(remoteVSTServerInstance2[pidx]->wname, GetModuleHandle(0));
-#endif    
+   
     sched_yield();	          
 
 	hWndvst[pidx] = 0;		
