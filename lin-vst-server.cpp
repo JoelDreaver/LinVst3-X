@@ -745,7 +745,7 @@ void RemoteVSTServer::EffectOpen()
     {  
 
 
-printf("servup\n");     
+// printf("servup\n");     
 
     memcpy(&m_shm3[FIXED_SHM_SIZE3], &am, sizeof(am));
 
@@ -1654,7 +1654,7 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
 #endif
 * */
 
- printf("server %d %d %d \n", am.incount, am.outcount, am.delay);
+ // printf("server %d %d %d \n", am.incount, am.outcount, am.delay);
 
     if((am.incount != m_numInputs) || (am.outcount != m_numOutputs) || (am.delay != m_delay))
     {  
@@ -1667,7 +1667,7 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode, VstIn
    
   */
   
-  printf("delay\n");
+ // printf("delay\n");
   
     if(am.delay != m_delay)
     m_delay = am.delay;
