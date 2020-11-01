@@ -2110,7 +2110,7 @@ int firstdone = 0;
     
     factory->getFactoryInfo (&factoryInfo);
     	
-	// cout << "  Factory Info:\n\tvendor = " << factoryInfo.vendor << "\n\turl = " << factoryInfo.url << "\n\temail = " << factoryInfo.email << "\n\n" << endl;
+	// cerr << "  Factory Info:\n\tvendor = " << factoryInfo.vendor << "\n\turl = " << factoryInfo.url << "\n\temail = " << factoryInfo.email << "\n\n" << endl;
 		
     int countclasses = factory->countClasses ();
    
@@ -2189,7 +2189,7 @@ int firstdone = 0;
     Steinberg::char8 cidString[50];
 	Steinberg::FUID (classInfo2.cid).toRegistryString (cidString);
 	Steinberg::String cidStr (cidString);
-	// cout << "  Class Info " << audioclass << ":\n\tname = " << classInfo2.name << "\n\tcategory = " << classInfo2.category << "\n\tcid = " << cidStr.text8 () << "\n\n" << endl;	 
+	// cerr << "  Class Info " << audioclass << ":\n\tname = " << classInfo2.name << "\n\tcategory = " << classInfo2.category << "\n\tcid = " << cidStr.text8 () << "\n\n" << endl;	 
 	
 	idval = mchr(cidStr[1], cidStr[10], cidStr[15], cidStr[20]);  
 	
@@ -2480,21 +2480,21 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     MSG msg;   
     DWORD dwWaitResult10;
      
-    cout << "DSSI VST plugin server v" << RemotePluginVersion << endl;
-    cout << "Copyright (c) 2012-2013 Filipe Coelho" << endl;
-    cout << "Copyright (c) 2010-2011 Kristian Amlie" << endl;
-    cout << "Copyright (c) 2004-2006 Chris Cannam" << endl;
+    cerr << "DSSI VST plugin server v" << RemotePluginVersion << endl;
+    cerr << "Copyright (c) 2012-2013 Filipe Coelho" << endl;
+    cerr << "Copyright (c) 2010-2011 Kristian Amlie" << endl;
+    cerr << "Copyright (c) 2004-2006 Chris Cannam" << endl;
     #ifdef EMBED
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.1.5-32bit" << endl;
+    cerr << "LinVst3-X version 2.1.5-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.1.5-64bit" << endl;    
+    cerr << "LinVst3-X version 2.1.5-64bit" << endl;    
     #endif
     #else
     #ifdef VST32SERVER
-    cout << "LinVst3-X version 2.1.5st-32bit" << endl;
+    cerr << "LinVst3-X version 2.1.5st-32bit" << endl;
     #else
-    cout << "LinVst3-X version 2.1.5st-64bit" << endl;    
+    cerr << "LinVst3-X version 2.1.5st-64bit" << endl;    
     #endif    
     #endif
     
@@ -2943,7 +2943,7 @@ DWORD dwElapsed;
     
     libnamepath = libname;
 
-    cout << "Loading  " << libname << endl;  
+    cerr << "Loading  " << libname << endl;  
     
     remotelib[plugincount] = LoadLibraryA(libname);
     if (!remotelib[plugincount])
