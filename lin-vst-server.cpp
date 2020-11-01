@@ -2500,7 +2500,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     
     if (signal(SIGTERM, SIGTERM_handler) == SIG_ERR) 
     {
-    printf("SIGTERM handler error\n");
+    cerr << "SIGTERM handler error\n" << endl;
     }
   
 #ifdef EMBED           
@@ -2527,7 +2527,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
          
     if(ShmID2 == -1)
     {
-    printf("ComMemCreateError\n");
+    cerr << "ComMemCreateError\n" << endl;
     exit(0);
     }
 
@@ -2549,7 +2549,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx, int c
     sptr = (int *)ShmPTR2;
     else
     {
-    printf("ComMemCreateError2\n");
+    cerr << "ComMemCreateError2\n" << endl;
     exit(0);
     }
     
@@ -2618,7 +2618,7 @@ DWORD dwElapsed;
 
     if (!RegisterClassEx(&wclass[pidx]))
     {
-    printf("RegClassErr\n");
+    cerr << "RegClassErr\n" << endl;
     sched_yield();	     
     SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);   
 	break;
@@ -2634,7 +2634,7 @@ DWORD dwElapsed;
 
     if(!hWndvst[pidx])
     {
-	printf("WindowCreateErr\n");
+    cerr << "WindowCreateErr\n" << endl;
     sched_yield();	     
     SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);	
     break;
@@ -2651,7 +2651,7 @@ DWORD dwElapsed;
 	 
     if (!remoteVSTServerInstance2[pidx]->rect)
     {
-    printf("RectErr\n"); 
+    cerr << "RectErr\n" << endl;
     remoteVSTServerInstance2[pidx]->winm->winerror = 1; 	    
     sched_yield();	     
     SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);    
@@ -2792,7 +2792,7 @@ DWORD dwElapsed;
     
     if (!remoteVSTServerInstance2[pidx]->vst2wrap)
     {
-    printf("MplugErr\n");  
+    cerr << "MplugErr\n" << endl; 
     remoteVSTServerInstance2[pidx]->plugerr = 1;
     sched_yield();	
     SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent7);                  
@@ -2948,7 +2948,7 @@ DWORD dwElapsed;
     remotelib[plugincount] = LoadLibraryA(libname);
     if (!remotelib[plugincount])
     {
-    printf("LoadvstErr\n");
+    cerr << "LoadvstErr\n" << endl;
 
  	sched_yield();
 #ifdef VST32SERVER
@@ -2996,7 +2996,7 @@ DWORD dwElapsed;
 
     if (!ThreadHandlevst[plugincount])
     {
-    printf("ThreadErr\n");
+    cerr << "ThreadErr\n" << endl;
 
  	sched_yield();
 #ifdef VST32SERVER
