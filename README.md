@@ -63,10 +63,10 @@ kill -15 pid
 
 LinVst3-X binaries are on the releases page (under Assets) https://github.com/osxmidi/LinVst3-X/releases
 
-Steinberg sdk version script files needed by LinVst3 are in the vst3-sdks folder.
-Select the folder that matches the Steinberg sdk version you are using and copy the files to the LinVst3 main folder.
+Steinberg sdk version script files needed by LinVst3-X are in the vst3-sdks folder.
+Select the folder that matches the Steinberg sdk version you are using and copy the files to the LinVst3-X main folder.
 
-The default LinVst3 script files are for the Steinberg vst-sdk_3.7.0_build-116_2020-07-31 sdk https://download.steinberg.net/sdk_downloads/vst-sdk_3.7.0_build-116_2020-07-31.zip
+The default LinVst3-X script files are for the Steinberg vst-sdk_3.7.0_build-116_2020-07-31 sdk https://download.steinberg.net/sdk_downloads/vst-sdk_3.7.0_build-116_2020-07-31.zip
 
 For previous sdk versions
 
