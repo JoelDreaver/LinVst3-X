@@ -45,6 +45,10 @@ LinVst3-X server details.
 
 The LinVst3-X server is first started (after a boot) when a plugin is first loaded and after that the LinVst3-X server continues to run and further plugin loading can occur faster than with LinVst3.
 
+The LinVst3-X server can be started first by entering into Terminal /usr/bin/lin-vst3-server-x.exe or wine "/usr/bin/lin-vst3-server-x.exe.so"
+
+Sometimes some plugins might end up in the wrong category if the LinVst3-X server is not started first, also a manual rescan of the plugins might help with the plugins going into the right category.
+
 The LinVst3-X server can be killed when no plugins are currently loaded.
 
 To kill the server (when no plugins are loaded) get the pid of the lin-vst3-server
