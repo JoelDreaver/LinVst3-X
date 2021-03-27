@@ -879,6 +879,16 @@ bool RemoteVSTServer::getEffCanDo(std::string ptr) {
 int RemoteVSTServer::getEffInt(int opcode, int value) {
   DWORD dwWaitResult;
   int retval;
+    
+  char lpbuf2[512]; 
+  sprintf(lpbuf2, "%d", pidx);  
+  string lpbuf = "create82";
+  lpbuf = lpbuf + lpbuf2;   
+    
+  char lpbuf22[512]; 
+  sprintf(lpbuf22, "%d", pidx);  
+  string lpbuf2 = "create62";
+  lpbuf2 = lpbuf2 + lpbuf22;            
 
   if (opcode == effGetPlugCategory) {
     if (vst2wrap->synth == true)
@@ -893,7 +903,7 @@ int RemoteVSTServer::getEffInt(int opcode, int value) {
 
       sched_yield();
       ghWriteEvent8 = 0;
-      ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent8");
+      ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, lpbuf.c_str());
       while (0 == PostThreadMessage(mainThreadId, WM_SYNC8, (WPARAM)pidx,
                                     (LPARAM)wname))
         sched_yield();
@@ -906,7 +916,7 @@ int RemoteVSTServer::getEffInt(int opcode, int value) {
 
       sched_yield();
       ghWriteEvent6 = 0;
-      ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent6");
+      ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
       while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                     (LPARAM)wname))
         sched_yield();
@@ -991,13 +1001,23 @@ std::string RemoteVSTServer::getEffString(int opcode, int index) {
 
 void RemoteVSTServer::setBufferSize(int sz) {
   DWORD dwWaitResult;
+    
+  char lpbuf2[512]; 
+  sprintf(lpbuf2, "%d", pidx);  
+  string lpbuf = "create822";
+  lpbuf = lpbuf + lpbuf2;   
+    
+  char lpbuf22[512]; 
+  sprintf(lpbuf22, "%d", pidx);  
+  string lpbuf2 = "create622";
+  lpbuf2 = lpbuf2 + lpbuf22;                
 
   if (bufferSize != sz) {
     //   vst2wrap->suspend ();
 
     sched_yield();
     ghWriteEvent8 = 0;
-    ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent8");
+    ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, lpbuf.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC8, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
@@ -1010,7 +1030,7 @@ void RemoteVSTServer::setBufferSize(int sz) {
 
     sched_yield();
     ghWriteEvent6 = 0;
-    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent6");
+    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
@@ -1027,13 +1047,23 @@ void RemoteVSTServer::setBufferSize(int sz) {
 
 void RemoteVSTServer::setSampleRate(int sr) {
   DWORD dwWaitResult;
+    
+  char lpbuf2[512]; 
+  sprintf(lpbuf2, "%d", pidx);  
+  string lpbuf = "create8222";
+  lpbuf = lpbuf + lpbuf2;   
+    
+  char lpbuf22[512]; 
+  sprintf(lpbuf22, "%d", pidx);  
+  string lpbuf2 = "create6222";
+  lpbuf2 = lpbuf2 + lpbuf22;                
 
   if (sampleRate != sr) {
     //   vst2wrap->suspend ();
 
     sched_yield();
     ghWriteEvent8 = 0;
-    ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent8");
+    ghWriteEvent8 = CreateEvent(NULL, TRUE, FALSE, lpbuf.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC8, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
@@ -1046,7 +1076,7 @@ void RemoteVSTServer::setSampleRate(int sr) {
 
     sched_yield();
     ghWriteEvent6 = 0;
-    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent6");
+    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
