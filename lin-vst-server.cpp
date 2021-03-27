@@ -587,7 +587,12 @@ void RemoteVSTServer::EffectOpen(ShmControl *m_shmControlptr) {
   char lpbuf2[512]; 
   sprintf(lpbuf2, "%d", pidx);  
   string lpbuf = "create4";
-  lpbuf = lpbuf + lpbuf2;    
+  lpbuf = lpbuf + lpbuf2;   
+    
+  char lpbuf22[512]; 
+  sprintf(lpbuf22, "%d", pidx);  
+  string lpbuf2 = "create6";
+  lpbuf2 = lpbuf2 + lpbuf22;        
 
   if (debugLevel > 0)
     cerr << "dssi-vst-server[1]: opening plugin" << endl;
@@ -698,7 +703,7 @@ void RemoteVSTServer::EffectOpen(ShmControl *m_shmControlptr) {
 
   sched_yield();
   ghWriteEvent6 = 0;
-  ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, "wm_syncevent6");
+  ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
   while (0 ==
          PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx, (LPARAM)wname))
     sched_yield();
