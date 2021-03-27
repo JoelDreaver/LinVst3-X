@@ -718,8 +718,7 @@ RemoteVSTServer::~RemoteVSTServer() {
   CloseHandle(ghWriteEvent5);
   sched_yield();
 
-  waitForServerexit();
-
+  //waitForServerexit();
   waitForClient2exit();
   waitForClient3exit();
   waitForClient4exit();
@@ -1163,65 +1162,25 @@ void RemoteVSTServer::showGUI(ShmControl *m_shmControlptr) {
   sched_yield();
 
   CloseHandle(ghWriteEvent);
-
+    
   if (dwWaitResult != WAIT_OBJECT_0) {
-    cerr << "dssi-vst-server: ERROR: Failed to create window!\n" << endl;
-    guiVisible = false;
-    winm->handle = 0;
-    winm->width = 0;
-    winm->height = 0;
-    memcpy(m_shmControlptr->wret, winm, sizeof(winmessage));
-    return;
-  }
-
-  sched_yield();
-
-  if (winm->winerror == 1) {
-    guiVisible = false;
-    winm->handle = 0;
-    winm->width = 0;
-    winm->height = 0;
-    memcpy(m_shmControlptr->wret, winm, sizeof(winmessage));
-    return;
-  }
-
-  sched_yield();
-
-  if (hWndvst[pidx] == 0) {
-    cerr << "dssi-vst-server: ERROR: Failed to create window!\n" << endl;
-    guiVisible = false;
-    winm->handle = 0;
-    winm->width = 0;
-    winm->height = 0;
-    memcpy(m_shmControlptr->wret, winm, sizeof(winmessage));
-    return;
-  }
-
-#ifdef TRACKTIONWM
-  if (hosttracktion == 1) {
-    SetWindowPos(hWndvst[pidx], HWND_TOP,
-                 GetSystemMetrics(SM_XVIRTUALSCREEN) + offset.x,
-                 GetSystemMetrics(SM_YVIRTUALSCREEN) + offset.y,
-                 rect->right - rect->left, rect->bottom - rect->top, 0);
-  } else {
-    SetWindowPos(hWndvst[pidx], HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN),
-                 GetSystemMetrics(SM_YVIRTUALSCREEN), rect->right - rect->left,
-                 rect->bottom - rect->top, 0);
-  }
-#else
-  SetWindowPos(hWndvst[pidx], HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN),
-               GetSystemMetrics(SM_YVIRTUALSCREEN), rect->right - rect->left,
-               rect->bottom - rect->top, 0);
-#endif
-
-  winm->width = rect->right - rect->left;
-  winm->height = rect->bottom - rect->top;
-  winm->handle = (long int)GetPropA(hWndvst[pidx], "__wine_x11_whole_window");
-
+  cerr << "dssi-vst-server: ERROR: Failed to create window!\n" << endl;
+  guiVisible = false;
+  winm->handle = 0;
+  winm->width = 0;
+  winm->height = 0;
   memcpy(m_shmControlptr->wret, winm, sizeof(winmessage));
-
-  guiresizewidth = rect->right - rect->left;
-  guiresizeheight = rect->bottom - rect->top;
+  }    
+   
+  if(winm->winerror == 1) {
+  cerr << "dssi-vst-server: ERROR: Failed to create window2!\n" << endl;      
+  guiVisible = false;     
+  winm->handle = 0;
+  winm->width = 0;
+  winm->height = 0;
+  memcpy(m_shmControlptr->wret, winm, sizeof(winmessage));
+  return;
+  }  
 
   sched_yield();
 }
@@ -2419,7 +2378,7 @@ break;
 
   sched_yield();
 
-  remoteVSTServerInstance2[idx]->waitForServerexit();
+  //remoteVSTServerInstance2[idx]->waitForServerexit();
   remoteVSTServerInstance2[idx]->waitForClient2exit();
   remoteVSTServerInstance2[idx]->waitForClient3exit();
   remoteVSTServerInstance2[idx]->waitForClient4exit();
@@ -2430,6 +2389,8 @@ break;
   //  TRUE, 5000);
   //   MsgWaitForMultipleObjects(4, remoteVSTServerInstance2[idx]->ThreadHandle,
   //   TRUE, 5000, QS_ALLEVENTS);
+  
+  MsgWaitForMultipleObjects(4, remoteVSTServerInstance2[idx]->ThreadHandle, TRUE, 5000, QS_ALLEVENTS);  
 
   for (int idx50 = 0; idx50 < 100000; idx50++) {
     if (remoteVSTServerInstance2[idx]->parfin &&
@@ -2681,8 +2642,35 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
                 SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);
                 break;
               }
+              
+#ifdef TRACKTIONWM
+ 			 if (remoteVSTServerInstance2[pidx]->hosttracktion == 1) {
+ 				 SetWindowPos(hWndvst[pidx], HWND_TOP,
+                 GetSystemMetrics(SM_XVIRTUALSCREEN) + remoteVSTServerInstance2[pidx]->offset.x,
+                 GetSystemMetrics(SM_YVIRTUALSCREEN) + remoteVSTServerInstance2[pidx]->offset.y,
+                 remoteVSTServerInstance2[pidx]->rect->right - remoteVSTServerInstance2[pidx]->rect->left, remoteVSTServerInstance2[pidx]->rect->bottom - 			remoteVSTServerInstance2[pidx]->rect->top, 0);
+ 			 } else {
+  				 SetWindowPos(hWndvst[pidx], HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN),
+                 GetSystemMetrics(SM_YVIRTUALSCREEN), remoteVSTServerInstance2[pidx]->rect->right - remoteVSTServerInstance2[pidx]->rect->left,
+                 remoteVSTServerInstance2[pidx]->rect->bottom - remoteVSTServerInstance2[pidx]->rect->top, 0);
+  }
+#else
+ 				 SetWindowPos(hWndvst[pidx], HWND_TOP, GetSystemMetrics(SM_XVIRTUALSCREEN),
+           		 GetSystemMetrics(SM_YVIRTUALSCREEN), remoteVSTServerInstance2[pidx]->rect->right - remoteVSTServerInstance2[pidx]->rect->left,
+                 remoteVSTServerInstance2[pidx]->rect->bottom - remoteVSTServerInstance2[pidx]->rect->top, 0);
+#endif
+
+ 				 remoteVSTServerInstance2[pidx]->winm->width = remoteVSTServerInstance2[pidx]->rect->right - remoteVSTServerInstance2[pidx]->rect->left;
+  				 remoteVSTServerInstance2[pidx]->winm->height = remoteVSTServerInstance2[pidx]->rect->bottom - remoteVSTServerInstance2[pidx]->rect->top;
+                 remoteVSTServerInstance2[pidx]->winm->handle = (long int)GetPropA(hWndvst[pidx], "__wine_x11_whole_window");
+
+  				 memcpy(remoteVSTServerInstance2[pidx]->m_shmControl3->wret, remoteVSTServerInstance2[pidx]->winm, sizeof(winmessage));
+
+  				 remoteVSTServerInstance2[pidx]->guiresizewidth = remoteVSTServerInstance2[pidx]->rect->right - remoteVSTServerInstance2[pidx]->rect->left;
+ 				 remoteVSTServerInstance2[pidx]->guiresizeheight = remoteVSTServerInstance2[pidx]->rect->bottom - remoteVSTServerInstance2[pidx]->rect->top;                            
 
               sched_yield();
+              
               SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);
             }
           } break;
