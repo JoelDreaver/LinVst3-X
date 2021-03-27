@@ -589,10 +589,10 @@ void RemoteVSTServer::EffectOpen(ShmControl *m_shmControlptr) {
   string lpbuf = "create4";
   lpbuf = lpbuf + lpbuf2;   
     
-  char lpbuf22[512]; 
-  sprintf(lpbuf22, "%d", pidx);  
-  string lpbuf2 = "create6";
-  lpbuf2 = lpbuf2 + lpbuf22;        
+  char lpbuf32[512]; 
+  sprintf(lpbuf32, "%d", pidx);  
+  string lpbuf3 = "create6";
+  lpbuf3 = lpbuf3 + lpbuf32;        
 
   if (debugLevel > 0)
     cerr << "dssi-vst-server[1]: opening plugin" << endl;
@@ -703,7 +703,7 @@ void RemoteVSTServer::EffectOpen(ShmControl *m_shmControlptr) {
 
   sched_yield();
   ghWriteEvent6 = 0;
-  ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
+  ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf3.c_str());
   while (0 ==
          PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx, (LPARAM)wname))
     sched_yield();
@@ -885,10 +885,10 @@ int RemoteVSTServer::getEffInt(int opcode, int value) {
   string lpbuf = "create82";
   lpbuf = lpbuf + lpbuf2;   
     
-  char lpbuf22[512]; 
-  sprintf(lpbuf22, "%d", pidx);  
-  string lpbuf2 = "create62";
-  lpbuf2 = lpbuf2 + lpbuf22;            
+  char lpbuf32[512]; 
+  sprintf(lpbuf32, "%d", pidx);  
+  string lpbuf3 = "create62";
+  lpbuf3 = lpbuf3 + lpbuf32;        
 
   if (opcode == effGetPlugCategory) {
     if (vst2wrap->synth == true)
@@ -916,7 +916,7 @@ int RemoteVSTServer::getEffInt(int opcode, int value) {
 
       sched_yield();
       ghWriteEvent6 = 0;
-      ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
+      ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf3.c_str());
       while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                     (LPARAM)wname))
         sched_yield();
@@ -1007,10 +1007,10 @@ void RemoteVSTServer::setBufferSize(int sz) {
   string lpbuf = "create822";
   lpbuf = lpbuf + lpbuf2;   
     
-  char lpbuf22[512]; 
-  sprintf(lpbuf22, "%d", pidx);  
-  string lpbuf2 = "create622";
-  lpbuf2 = lpbuf2 + lpbuf22;                
+  char lpbuf32[512]; 
+  sprintf(lpbuf32, "%d", pidx);  
+  string lpbuf3 = "create622";
+  lpbuf3 = lpbuf3 + lpbuf32;          
 
   if (bufferSize != sz) {
     //   vst2wrap->suspend ();
@@ -1030,7 +1030,7 @@ void RemoteVSTServer::setBufferSize(int sz) {
 
     sched_yield();
     ghWriteEvent6 = 0;
-    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
+    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf3.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
@@ -1053,10 +1053,10 @@ void RemoteVSTServer::setSampleRate(int sr) {
   string lpbuf = "create8222";
   lpbuf = lpbuf + lpbuf2;   
     
-  char lpbuf22[512]; 
-  sprintf(lpbuf22, "%d", pidx);  
-  string lpbuf2 = "create6222";
-  lpbuf2 = lpbuf2 + lpbuf22;                
+  char lpbuf32[512]; 
+  sprintf(lpbuf32, "%d", pidx);  
+  string lpbuf3 = "create6222";
+  lpbuf3 = lpbuf3 + lpbuf32;        
 
   if (sampleRate != sr) {
     //   vst2wrap->suspend ();
@@ -1076,7 +1076,7 @@ void RemoteVSTServer::setSampleRate(int sr) {
 
     sched_yield();
     ghWriteEvent6 = 0;
-    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf2.c_str());
+    ghWriteEvent6 = CreateEvent(NULL, TRUE, FALSE, lpbuf3.c_str());
     while (0 == PostThreadMessage(mainThreadId, WM_SYNC6, (WPARAM)pidx,
                                   (LPARAM)wname))
       sched_yield();
