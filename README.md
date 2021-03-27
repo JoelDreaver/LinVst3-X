@@ -12,7 +12,7 @@ LinVst3-X (the X stands for Extra) adds support for Windows vst3 plugins to be u
 
 LinVst3-X runs vst plugins in a single Wine process so plugins that communicate with each other or plugins that can use shared samples between instances will be able to communicate with their other instances.
 
-It means that plugin instances can communicate with each other (which is not possible with LinVst3), for example, Voxengo GlissEQ and Fabfilter ProQ-3 instances on different tracks simultaneously displaying the track spectrums and Kontakt instances on different tracks that use the same library not having to load samples for each new instance etc.
+Plugin instances can communicate with each other (which is not possible with LinVst3), for example, Voxengo GlissEQ instances on different tracks simultaneously displaying the track spectrums and Kontakt instances on different tracks that use the same library not having to load samples for each new instance etc.
 
 Plugins running in one process are not sandboxed, so if one plugin crashes then the whole lot might crash.
 
