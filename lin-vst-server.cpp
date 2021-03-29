@@ -532,7 +532,7 @@ static VstIntPtr VESTIGECALLBACK hostCallback3(AEffect *plugin, VstInt32 opcode,
                                                void *ptr, float opt) {
   RemoteVSTServer *remote5;
   VstIntPtr rv = 0;
-
+/*
   if (plugin) {
     if (!plugin->resvd2) {
       if (hcidx != 512000) {
@@ -541,19 +541,22 @@ static VstIntPtr VESTIGECALLBACK hostCallback3(AEffect *plugin, VstInt32 opcode,
       }
     }
   }
-
+*/
+    
   switch (opcode) {
   case audioMasterVersion:
     rv = 2400;
     break;
 
   default: {
-    if (plugin) {
+   if (plugin) {
+    if (plugin->resvd2) {
       remote5 = (RemoteVSTServer *)plugin->resvd2;
       if (remote5) {
         rv = remote5->hostCallback2(plugin, opcode, index, value, ptr, opt);
       }
     }
+   }
   } break;
   }
   remote5 = nullptr;
@@ -1673,7 +1676,7 @@ VstIntPtr RemoteVSTServer::hostCallback2(AEffect *plugin, VstInt32 opcode,
     {
       int opcodegui = 123456789;
 #ifdef EMBED
-      if (hWnd && guiVisible && !exiting && effectrun && (guiupdate == 0)) {
+      if (hWndvst[pidx] && guiVisible && !exiting && effectrun && (guiupdate == 0)) {
         if ((guiresizewidth == index) && (guiresizeheight == value)) {
           break;
         }
