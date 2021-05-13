@@ -244,7 +244,7 @@ public:
     RemoteVSTServer *remote1 = (RemoteVSTServer *)parameter;
 
     while (!remote1->exiting) {
-      remote1->dispatchProcess(50);
+      remote1->dispatchProcess(5);
     }
     // param.sched_priority = 0;
     // (void)sched_setscheduler(0, SCHED_OTHER, &param);
@@ -258,7 +258,7 @@ public:
     RemoteVSTServer *remote2 = (RemoteVSTServer *)parameter;
 
     while (!remote2->exiting) {
-      remote2->dispatchGetSet(50);
+      remote2->dispatchGetSet(5);
     }
     // param.sched_priority = 0;
     // (void)sched_setscheduler(0, SCHED_OTHER, &param);
@@ -272,7 +272,7 @@ public:
     RemoteVSTServer *remote3 = (RemoteVSTServer *)parameter;
 
     while (!remote3->exiting) {
-      remote3->dispatchPar(50);
+      remote3->dispatchPar(5);
     }
     // param.sched_priority = 0;
     // (void)sched_setscheduler(0, SCHED_OTHER, &param);
@@ -286,7 +286,7 @@ public:
     RemoteVSTServer *remote3 = (RemoteVSTServer *)parameter;
 
     while (!remote3->exiting) {
-      remote3->dispatchControl2(50);
+      remote3->dispatchControl2(5);
     }
     // param.sched_priority = 0;
     // (void)sched_setscheduler(0, SCHED_OTHER, &param);
@@ -2449,7 +2449,7 @@ if(remoteVSTServerInstance2[idx]->exiting)
 break;
 */
 
-    remoteVSTServerInstance2[idx]->dispatchControl(50);
+    remoteVSTServerInstance2[idx]->dispatchControl(5);
   }
 
   // remoteVSTServerInstance2[pidx]->m_plugin->resvd2 = 0;
