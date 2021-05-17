@@ -1405,7 +1405,7 @@ int RemoteVSTServer::processVstEvents() {
 
 void RemoteVSTServer::getChunk(ShmControl *m_shmControlptr) {
 #ifdef PCACHE
-    ParamState *pstate = (ParamState*)remoteVSTServerInstance->m_shm5;
+    ParamState *pstate = (ParamState*)m_shm5;
        
     if(numpars > 0)
     {
@@ -1445,7 +1445,7 @@ void RemoteVSTServer::getChunk(ShmControl *m_shmControlptr) {
 
 void RemoteVSTServer::setChunk(ShmControl *m_shmControlptr) {
 #ifdef PCACHE
-    ParamState *pstate = (ParamState*)remoteVSTServerInstance->m_shm5;
+    ParamState *pstate = (ParamState*)m_shm5;
        
     if(numpars > 0)
     {
