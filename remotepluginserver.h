@@ -158,6 +158,16 @@ public:
   char *m_shm2;
   char *m_shm3;
   char *m_shm4;
+
+#ifdef PCACHE
+  char *m_shm5;
+
+  struct ParamState {
+  float value;
+  int changed;
+  };
+#endif
+
   int m_shmControlFd;
 
   int m_threadsfinish;

@@ -136,7 +136,29 @@ public:
   }
   virtual int getinitialDelay() { return vst2wrap->initialdelay; }
   virtual int getUID() { return vst2uid; }
-  virtual int getParameterCount() { return vst2wrap->numparams; }
+  virtual int getParameterCount() { 
+#ifdef PCACHE
+      int val = vst2wrap->numparams;
+      
+      numpars = val;
+      
+      ParamState p;
+  
+      for (int i = 0; i < val; ++i)
+      {
+      if(i >= 10000)
+      break;
+      p.changed = 0;   
+      float value = getParameter(i);      
+      p.value = value;       
+      memcpy(&m_shm5[i * sizeof(ParamState)], &p, sizeof(ParamState));      
+      }   
+       
+      return val;                   
+#else        
+  return vst2wrap->numparams; 
+#endif      
+  }
   virtual std::string getParameterName(int);
   virtual std::string getParameterLabel(int);
   virtual std::string getParameterDisplay(int);
@@ -256,10 +278,46 @@ public:
 
   static DWORD WINAPI GetSetThreadMain(void *parameter) {
     RemoteVSTServer *remote2 = (RemoteVSTServer *)parameter;
+#ifdef PCACHE  
+  struct sched_param param;
+  param.sched_priority = 0;
+  int result = sched_setscheduler(0, SCHED_OTHER, &param);
 
+  if (result < 0)
+  {
+  perror("Failed to set realtime priority for audio thread");
+  }
+ 
+  struct ParamState {
+  float value;
+  int changed;
+  };
+   
+   ParamState *pstate = (ParamState*)remote2->m_shm5; 
+   
+   while (!remote2->exiting) {
+   sched_yield();
+     
+   if(remote2->numpars > 0)
+   {
+   for(int idx=0;idx<remote2->numpars;idx++)
+   {
+   if(pstate[idx].changed == 1)
+   {
+   remote2->setParameter(idx, pstate[idx].value);
+   pstate[idx].changed = 0; 
+   break;  
+   }    
+   sched_yield();
+   } 
+   }            
+  }  
+#else  
     while (!remote2->exiting) {
       remote2->dispatchGetSet(5);
     }
+#endif
+
     // param.sched_priority = 0;
     // (void)sched_setscheduler(0, SCHED_OTHER, &param);
     remote2->getfin = 1;
@@ -383,7 +441,11 @@ public:
   int plugerr;
 
   RemotePluginDebugLevel debugLevel;
-
+  
+#ifdef PCACHE
+  int numpars;
+#endif    
+  
   std::string m_name;
   std::string m_maker;
 
@@ -440,6 +502,9 @@ RemoteVSTServer::RemoteVSTServer(std::string fileIdentifiers,
       ghWriteEvent3(0), ghWriteEvent4(0), ghWriteEvent5(0), ghWriteEvent6(0),
       ghWriteEvent7(0), ghWriteEvent8(0), libHandle(0), pidx(0), plugerr(0),
       vst2wrap(0), factory(0), mpluginptr(&mplugin), vst2uid(0),
+#ifdef PCACHE
+      numpars(0),
+#endif                        
       debugLevel(RemotePluginDebugNone) {
   ThreadHandle[0] = 0;
   ThreadHandle[1] = 0;
@@ -1339,6 +1404,21 @@ int RemoteVSTServer::processVstEvents() {
 }
 
 void RemoteVSTServer::getChunk(ShmControl *m_shmControlptr) {
+#ifdef PCACHE
+    ParamState *pstate = (ParamState*)remoteVSTServerInstance->m_shm5;
+       
+    if(numpars > 0)
+    {
+    for(int idx=0;idx<numpars;idx++)
+    {
+    sched_yield();
+    while(pstate[idx].changed == 1)
+    {
+     sched_yield();
+    } 
+    } 
+    }           
+#endif
 #ifdef CHUNKBUF
   int bnk_prg = m_shmControlptr->value;
   int sz = vst2wrap->getChunk((void **)&chunkptr, bnk_prg ? true : false);
@@ -1364,6 +1444,21 @@ void RemoteVSTServer::getChunk(ShmControl *m_shmControlptr) {
 }
 
 void RemoteVSTServer::setChunk(ShmControl *m_shmControlptr) {
+#ifdef PCACHE
+    ParamState *pstate = (ParamState*)remoteVSTServerInstance->m_shm5;
+       
+    if(numpars > 0)
+    {
+    for(int idx=0;idx<numpars;idx++)
+    {
+    sched_yield();
+    while(pstate[idx].changed == 1)
+    {
+     sched_yield();
+    } 
+    } 
+    }           
+#endif
 #ifdef CHUNKBUF
   int sz = m_shmControlptr->value;
   if (sz >= CHUNKSIZEMAX) {
@@ -1372,12 +1467,14 @@ void RemoteVSTServer::setChunk(ShmControl *m_shmControlptr) {
     int r = vst2wrap->setChunk(ptr, sz, bnk_prg ? true : false);
     free(chunkptr2);
     m_shmControlptr->retint = r;
+    getParameterCount();   
     return;
   } else {
     int bnk_prg = m_shmControlptr->value2;
     void *ptr = m_shm3;
     int r = vst2wrap->setChunk(ptr, sz, bnk_prg ? true : false);
     m_shmControlptr->retint = r;
+    getParameterCount();   
     return;
   }
 #else
@@ -1386,6 +1483,7 @@ void RemoteVSTServer::setChunk(ShmControl *m_shmControlptr) {
   void *ptr = m_shm3;
   int r = vst2wrap->setChunk(ptr, sz, bnk_prg ? true : false);
   m_shmControlptr->retint = r;
+  getParameterCount();   
   return;
 #endif
 }
@@ -2302,7 +2400,7 @@ DWORD WINAPI VstThreadMain(LPVOID parameter) {
 
   ptr = (int *)remoteVSTServerInstance2[idx]->m_shm;
 
-  *ptr = 420;
+  *ptr = 450;
 
   for (int i = 0; i < 400000; i++) {
     if ((*ptr == 2) || (*ptr == 3)) {
@@ -2562,15 +2660,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
   cerr << "Copyright (c) 2004-2006 Chris Cannam" << endl;
 #ifdef EMBED
 #ifdef VST32SERVER
-  cerr << "LinVst3-X version 4.2-32bit" << endl;
+  cerr << "LinVst3-X version 4.5-32bit" << endl;
 #else
-  cerr << "LinVst3-X version 4.2-64bit" << endl;
+  cerr << "LinVst3-X version 4.5-64bit" << endl;
 #endif
 #else
 #ifdef VST32SERVER
-  cerr << "LinVst3-X version 4.2st-32bit" << endl;
+  cerr << "LinVst3-X version 4.5st-32bit" << endl;
 #else
-  cerr << "LinVst3-X version 4.2st-64bit" << endl;
+  cerr << "LinVst3-X version 4.5st-64bit" << endl;
 #endif
 #endif
 
