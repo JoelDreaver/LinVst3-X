@@ -2895,15 +2895,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
             int pidx = (int)msg.wParam;
 
             if (remoteVSTServerInstance2[pidx]) {
+              sched_yield();  
+              remoteVSTServerInstance2[pidx]->vst2wrap->editor->open(hWndvst[pidx]);                
+                
               ShowWindow(hWndvst[pidx], SW_SHOWNORMAL);
               sched_yield();
               // ShowWindow(hWnd, SW_SHOW);
               UpdateWindow(hWndvst[pidx]);
-                
-              sched_yield();  
-              remoteVSTServerInstance2[pidx]->vst2wrap->editor->open(
-                  hWndvst[pidx]);
-                
+                                
               sched_yield();
               SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent3);
             }
