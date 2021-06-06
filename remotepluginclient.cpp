@@ -649,7 +649,7 @@ RemotePluginClient::RemotePluginClient(audioMasterCallback theMaster,
 #ifdef EMBEDDRAG
       x11_win(0), pparent(0), root(0), children(0), numchildren(0), parentok(0),
 #endif
-      eventrun(0), eventfinish(0),
+      eventrun(0), eventstop(0), eventfinish(0),
 #endif
 #ifdef PCACHE
      m_shm5(0),
@@ -758,6 +758,8 @@ void RemotePluginClient::eventloop(Display *display, Window parent,
 #ifdef XECLOSE
   Atom xembedatom = XInternAtom(display, "_XEMBED_INFO", False);
 #endif
+
+  plugin->eventstop = 1;
 
   if (parent && child) {
     for (int loopidx = 0; (loopidx < 10) && XPending(display); loopidx++) {
@@ -960,6 +962,7 @@ void RemotePluginClient::eventloop(Display *display, Window parent,
       }
     }
   }
+  plugin->eventstop = 0;
 }
 #endif
 
@@ -1320,6 +1323,13 @@ VstIntPtr RemotePluginClient::dispatchproc(AEffect *effect, VstInt32 opcode,
       // XLockDisplay(plugin->display);
 #ifdef EMBED
       plugin->eventrun = 0;
+
+      for (int i5 = 0; i5 < 50000; i5++) {
+        if (plugin->eventstop == 0)
+          break;
+        usleep(100);
+      }
+
 #ifdef XECLOSE
       XSync(plugin->display, true);
 
@@ -1447,6 +1457,13 @@ VstIntPtr RemotePluginClient::dispatchproc(AEffect *effect, VstInt32 opcode,
       // XLockDisplay(plugin->display);
 #ifdef EMBED
       plugin->eventrun = 0;
+
+      for (int i5 = 0; i5 < 50000; i5++) {
+        if (plugin->eventstop == 0)
+          break;
+        usleep(100);
+      }
+
 #ifdef XECLOSE
       XSync(plugin->display, true);
 
@@ -2014,7 +2031,7 @@ void RemotePluginClient::syncStartup() {
   ptr = (int *)m_shm;
 
   for (int i = 0; i < 400000; i++) {
-    if (*ptr == 450) {
+    if (*ptr == 451) {
       startok = 1;
       break;
     }
@@ -2358,9 +2375,12 @@ void RemotePluginClient::setParameter(int p, float v) {
 
 #ifdef PCACHE
   ParamState* pstate = (ParamState*)m_shm5; 
-    
+
+  if(p < 10000)
+  {    
   pstate[p].changed = 1;
-  pstate[p].value = v;  
+  pstate[p].valueupdate = v;  
+  }
 #else  
   m_shmControlptr4->ropcode = RemotePluginSetParameter;
   m_shmControlptr4->value = p;
@@ -2380,8 +2400,11 @@ float RemotePluginClient::getParameter(int p) {
   }
   
 #ifdef PCACHE
+  if(p < 10000)
+  {    
   ParamState* pstate = (ParamState*)m_shm5;        
   return pstate[p].value;
+  }
 #else  
   m_shmControlptr5->ropcode = RemotePluginGetParameter;
   m_shmControlptr5->value = p;
