@@ -2852,20 +2852,22 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
                 SetEvent(remoteVSTServerInstance2[pidx]->ghWriteEvent);
                 break;
               }
+                
+              SetWindowPos(hWndvst[pidx], HWND_TOP,
+              GetSystemMetrics(SM_XVIRTUALSCREEN) + remoteVSTServerInstance2[pidx]->offset.x,
+              GetSystemMetrics(SM_YVIRTUALSCREEN) + remoteVSTServerInstance2[pidx]->offset.y, 200, 200, 0);                    
 
               sched_yield();
               remoteVSTServerInstance2[pidx]->rect = 0;
               remoteVSTServerInstance2[pidx]->vst2wrap->editor->getRect(
                   &remoteVSTServerInstance2[pidx]->rect);
               sched_yield();
-                /*
               remoteVSTServerInstance2[pidx]->vst2wrap->editor->open(
                   hWndvst[pidx]);
               sched_yield();
               remoteVSTServerInstance2[pidx]->vst2wrap->editor->getRect(
                   &remoteVSTServerInstance2[pidx]->rect);
               sched_yield();
-              */
                 
               if (!remoteVSTServerInstance2[pidx]->rect) {
                 cerr << "RectErr\n" << endl;
@@ -2937,9 +2939,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
             int pidx = (int)msg.wParam;
 
             if (remoteVSTServerInstance2[pidx]) {
-              sched_yield();  
-              remoteVSTServerInstance2[pidx]->vst2wrap->editor->open(hWndvst[pidx]);                
-                
+              sched_yield();     
               ShowWindow(hWndvst[pidx], SW_SHOWNORMAL);
               sched_yield();
               // ShowWindow(hWnd, SW_SHOW);
