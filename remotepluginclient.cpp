@@ -425,7 +425,7 @@ Atom xembedatom = XInternAtom(display, "_XEMBED_INFO", False);
       if(y3 < 0)
       {
       height += y3;
-      y3 = 0;;
+      y3 = 0;
       }
 
       if(((e.xcrossing.x_root < x3) || (e.xcrossing.x_root > x3 + (width - 1)))
