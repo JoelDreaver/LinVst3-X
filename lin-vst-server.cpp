@@ -150,7 +150,8 @@ public:
       break;
       p.changed = 0;   
       float value = getParameter(i);      
-      p.value = value;       
+      p.value = value;  
+      p.valueupdate = value;         
       memcpy(&m_shm5[i * sizeof(ParamState)], &p, sizeof(ParamState));      
       }   
        
@@ -2396,7 +2397,7 @@ DWORD WINAPI VstThreadMain(LPVOID parameter) {
 
   ptr = (int *)remoteVSTServerInstance2[idx]->m_shm;
 
-  *ptr = 451;
+  *ptr = 452;
 
   for (int i = 0; i < 400000; i++) {
     if ((*ptr == 2) || (*ptr == 3)) {
@@ -2672,15 +2673,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdlinexxx,
   cerr << "Copyright (c) 2004-2006 Chris Cannam" << endl;
 #ifdef EMBED
 #ifdef VST32SERVER
-  cerr << "LinVst3-X version 4.5.1-32bit" << endl;
+  cerr << "LinVst3-X version 4.5.2-32bit" << endl;
 #else
-  cerr << "LinVst3-X version 4.5.1-64bit" << endl;
+  cerr << "LinVst3-X version 4.5.2-64bit" << endl;
 #endif
 #else
 #ifdef VST32SERVER
-  cerr << "LinVst3-X version 4.5.1st-32bit" << endl;
+  cerr << "LinVst3-X version 4.5.2st-32bit" << endl;
 #else
-  cerr << "LinVst3-X version 4.5.1st-64bit" << endl;
+  cerr << "LinVst3-X version 4.5.2st-64bit" << endl;
 #endif
 #endif
 
